@@ -31,6 +31,9 @@ public class BankAccount {
 	}
 	
 	public double withdraw(double amount) {
+		if(amount < 0) {
+			throw new IllegalArgumentException("Amount must be positive");
+		}
 		if(amount > this.balance) {
 			throw new IllegalArgumentException("Amount must be less than or equal to balance");
 		}
@@ -39,6 +42,9 @@ public class BankAccount {
 	}
 	
 	public void transfer(double amount, BankAccount recipient) {
+		if(amount < 0) {
+			throw new IllegalArgumentException("Amount must be positive");
+		}
 		double transferAmt = this.withdraw(amount);
 		recipient.deposit(transferAmt);
 	}
@@ -51,5 +57,17 @@ public class BankAccount {
 	//getters and setters - not tested
 	public double getBalance() {
 		return this.balance;
+	}
+	
+	public int getID() {
+		return this.ID;
+	}
+	
+	public boolean getIsChecking() {
+		return this.isChecking;
+	}
+	
+	public User getOwner() {
+		return this.owner;
 	}
 }
