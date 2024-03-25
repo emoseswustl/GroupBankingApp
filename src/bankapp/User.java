@@ -3,14 +3,14 @@ import java.util.Scanner;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class User extends BankAccount { 
-	LinkedList<BankAccount> user = new LinkedList<BankAccount>(); 
+public class User { 
+	private LinkedList<BankAccount> user; 
 	private BankAccount bankaccount; 
 	private String password; 
 
-	public User(String password, LinkedList<BankAccount> user) {
+	public User(String password) {
+		this.user = new LinkedList<BankAccount>();
 		this.password = password; 
-		this.user = user; 
 	}
 
 	public String getPassword() {
