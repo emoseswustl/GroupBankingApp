@@ -45,6 +45,9 @@ public class BankAccount {
 		if(amount < 0) {
 			throw new IllegalArgumentException("Amount must be positive");
 		}
+		if(amount > this.balance) {
+			throw new IllegalArgumentException("Amount must be less than or equal to balance");
+		}
 		double transferAmt = this.withdraw(amount);
 		recipient.deposit(transferAmt);
 	}
