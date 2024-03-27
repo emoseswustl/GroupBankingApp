@@ -6,7 +6,7 @@ public class Menu {
 
 	private Scanner in;
 	private BankAccount account;
-
+	
 	
 	//Constructor
 	public Menu(InputCaretaker caretaker) {

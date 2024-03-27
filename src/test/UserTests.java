@@ -98,4 +98,5 @@ class UserTests {
         user.addBankAccount(secondAccount, CORRECT_PASSWORD);
         assertEquals(0.0, user.getLiquidatedAssets(INCORRECT_PASSWORD));
     }
+}
 
