@@ -2,6 +2,10 @@ package bankapp;
 
 import java.util.Scanner;
 
+import bankapp.User;
+
+import bankapp.BankAccount;
+
 interface InputCaretaker {
 	double getDouble();
 }
@@ -23,11 +27,14 @@ public class Menu {
 
 	private InputCaretaker caretaker;
 	private BankAccount account;
+	private User user;
 
 	
 	//Constructor
 	public Menu(InputCaretaker caretaker) {
 		this.caretaker = caretaker;
+		user = new User("abc");
+		account = new BankAccount(true, user, 0.0);
 	}
 
 	//not tested
