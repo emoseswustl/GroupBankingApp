@@ -5,11 +5,21 @@ import java.util.Objects;
 
 public class User { 
 	private LinkedList<BankAccount> userAccounts;  
-	private String password; 
+	private String password;
+	private String username;
 
-	public User(String password) {
+	public User(String username, String password) {
 		this.userAccounts = new LinkedList<BankAccount>();
+		this.username = Objects.requireNonNull(username, "Username must be non-null");
 		this.password = Objects.requireNonNull(password, "Password must be non-null");
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = Objects.requireNonNull(username, "Username must be non-null");
 	}
 
 	public String getPassword() {
