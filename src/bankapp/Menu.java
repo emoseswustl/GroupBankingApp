@@ -28,7 +28,6 @@ public class Menu {
 	//Constructor
 	public Menu(InputCaretaker caretaker) {
 		this.caretaker = caretaker;
-		this.account = new BankAccount();
 	}
 
 	//not tested
