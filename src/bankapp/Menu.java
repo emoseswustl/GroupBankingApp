@@ -134,9 +134,11 @@ public class Menu {
 		} 
 		else if (option == 5) {
 			System.out.println("Account Information: ");
-			System.out.println("Account ID: " + account.getID());
-			System.out.println("Account Type: " + (account.isChecking() ? "Checking" : "Savings"));
-			System.out.println("Account Balance: " + account.getBalance());
+			for (BankAccount account : accounts) {
+				System.out.println("Account ID: " + account.getID());
+				System.out.println("Account Type: " + (account.isChecking() ? "Checking" : "Savings"));
+				System.out.println("Account Balance: " + account.getBalance());
+			}
 		} 
 		else if (option == 6) {
 			if (accounts.size() < 2) {
