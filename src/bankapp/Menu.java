@@ -6,7 +6,14 @@ public class Menu {
 
 	private Scanner in;
 	private BankAccount account;
+
 	
+	//Constructor
+	public Menu(InputCaretaker caretaker) {
+		this.caretaker = caretaker;
+		this.account = new BankAccount();
+	}
+
 	//not tested
 	public static void main(String[] args) {
 		Menu mainMenu = new Menu();
