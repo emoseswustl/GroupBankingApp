@@ -5,17 +5,17 @@ public class BankAccount {
 	private double balance;
 	private int ID;
 	private boolean isChecking;
-	private User owner;
+	private final User owner; // if ownership of a BankAccount cannot be changed
 	
 	//Constructors - not tested
 	public BankAccount(boolean isChecking, User owner) {
-		this.balance = 0;
-		this.ID = (int) (Math.random() * 1000000);
-		this.isChecking = isChecking;
-		this.owner = owner;
+		this(isChecking, owner, 0.0);
 	}
 	
 	public BankAccount(boolean isChecking, User owner, double startBalance) {
+		if (startBalance < 0) {
+			throw new IllegalArgumentException("Start balance must be non-negative");
+		}
 		this.balance = startBalance;
 		this.ID = (int) (Math.random() * 1000000);
 		this.isChecking = isChecking;
@@ -24,40 +24,52 @@ public class BankAccount {
 	
 	//public method doing some work - lots of tests
 	public void deposit(double amount) {
-		if(amount < 0) {
+		if(amount <= 0) {
 			throw new IllegalArgumentException("Amount must be positive");
 		}
-		this.balance += amount;
+		synchronized(this) { // Prevent race-condition vulnerability/exploit ensures single thread access
+			this.balance += amount;
+		}
 	}
 	
 	public double withdraw(double amount) {
-		if(amount < 0) {
+		if(amount <= 0) {
 			throw new IllegalArgumentException("Amount must be positive");
 		}
-		if(amount > this.balance) {
-			throw new IllegalArgumentException("Amount must be less than or equal to balance");
+		synchronized (this) { 
+			if(amount > this.balance) {
+				throw new IllegalArgumentException("Amount must be less than or equal to balance");
+			}
+			this.balance -= amount;
 		}
-		this.balance -= amount;
 		return amount;
 	}
 	
 	public void transfer(double amount, BankAccount recipient) {
-		if(amount < 0) {
+		if (recipient == null) {
+			throw new IllegalArgumentException("Recipient can't be null");
+		}
+		if (recipient == this) {
+			throw new IllegalArgumentException("Can't transfer to self");
+		}
+		if(amount <= 0) {
 			throw new IllegalArgumentException("Amount must be positive");
 		}
 		if(amount > this.balance) {
 			throw new IllegalArgumentException("Amount must be less than or equal to balance");
 		}
-		double transferAmt = this.withdraw(amount);
-		recipient.deposit(transferAmt);
+		synchronized (this) {
+			this.withdraw(amount);
+			recipient.deposit(amount);
+		}
 	}
 	
 	public double cashOut() {
-		double cashOutAmt = this.balance;
-		return this.withdraw(cashOutAmt);
+		synchronized (this) {
+			return this.withdraw(this.balance);
+		}
 	}
 	
-	//getters and setters - not tested
 	public double getBalance() {
 		return this.balance;
 	}
@@ -66,7 +78,7 @@ public class BankAccount {
 		return this.ID;
 	}
 	
-	public boolean getIsChecking() {
+	public boolean isChecking() {
 		return this.isChecking;
 	}
 	
