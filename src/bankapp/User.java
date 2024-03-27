@@ -9,7 +9,7 @@ public class User {
 
 	public User(String password) {
 		this.userAccounts = new LinkedList<BankAccount>();
-		this.password = password; 
+		this.password = Objects.requireNonNull(password, "Password must be non-null");
 	}
 
 	public String getPassword() {
@@ -17,30 +17,30 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = Objects.requireNonNull(password, "Password must be non-null");
 	}
 
 	public boolean login(String password) {
-		return this.password.equals(password);
+		return this.password.equals(Objects.requireNonNull(password, "Password must be non-null"));
 	}
 	
 	public boolean addBankAccount(BankAccount bankaccount, String password) {  
-		if(login(password)) {
-			userAccounts.add(bankaccount);
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+			userAccounts.add(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 			return true; 
 		} 
 		return false;
 	}
 
 	public boolean removeBankAccount(BankAccount bankaccount, String password) {
-		if(login(password)) {
-			return userAccounts.remove(bankaccount);
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+			return userAccounts.remove(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 		}
 		return false;
 	}
 	
 	public int numberOfAccounts(String password) {
-		if(login(password)) {
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
 			return userAccounts.size(); 
 		}
 		return 0;
@@ -48,7 +48,7 @@ public class User {
 	
 	public double getLiquidatedAssets(String password) {
 		double liquidatedAssets = 0.0;
-		if(login(password)) {
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
 			for (BankAccount bankaccount : userAccounts) {
 				liquidatedAssets += bankaccount.getBalance();
 			}
