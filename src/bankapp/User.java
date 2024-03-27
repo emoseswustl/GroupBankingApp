@@ -4,13 +4,12 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 public class User { 
-	private LinkedList<BankAccount> user; 
-	private BankAccount bankaccount; 
+	private LinkedList<BankAccount> userAccounts;  
 	private String password; 
 
 	public User(String password) {
-		this.user = new LinkedList<BankAccount>();
-		this.password = password; 
+		this.userAccounts = new LinkedList<BankAccount>();
+		this.password = Objects.requireNonNull(password, "Password must be non-null");
 	}
 
 	public String getPassword() {
@@ -18,66 +17,42 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = Objects.requireNonNull(password, "Password must be non-null");
 	}
 
-	public boolean login(String password, User x) {
-		if (password == x.getPassword()) {
+	public boolean login(String password) {
+		return this.password.equals(Objects.requireNonNull(password, "Password must be non-null"));
+	}
+	
+	public boolean addBankAccount(BankAccount bankaccount, String password) {  
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+			userAccounts.add(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 			return true; 
+		} 
+		return false;
+	}
+
+	public boolean removeBankAccount(BankAccount bankaccount, String password) {
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+			return userAccounts.remove(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 		}
 		return false;
 	}
 	
-	public LinkedList addBankAccount(LinkedList<BankAccount> user, BankAccount bankaccount, User x) { 
-		boolean access = login(x.getPassword(), x); 
-		if(access == true) {
-			x.user.add(new BankAccount(bankaccount)); //call to other 
-			return x.user; }
-		else {
-			return null; 
+	public int numberOfAccounts(String password) {
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+			return userAccounts.size(); 
 		}
+		return 0;
 	}
 	
-	public int numberOfAccounts(User x, LinkedList<BankAccount> user) {
-		boolean access = login(x.getPassword(), x); 
-		if(access == true) {
-			return x.user.size(); 
-		}
-		else {
-			return 0; //since account doesnt exist if login is not correct
-		}
-	}
-	
-	public LinkedList removeBankAccount(LinkedList<BankAccount> user, BankAccount bankaccount, User x) {
-		boolean access = login(x.getPassword(), x); 
-		if(access == true) {
-		x.user.remove(bankaccount); 
-		return x.user; }
-		else {
-			return null; }
-	}
-	
-	public double getLiquidatedAssets(User x, LinkedList<BankAccount> user) {
-		boolean access = login(x.getPassword(), x);
-		int liquidatedAssets;
-		if(access == true) {
-			for (int i = 0; i<x.user.size(); i++) {
-				liquidatedAssets += x.user.get(i.value()); //placeholder method being the amount in the certain asset
+	public double getLiquidatedAssets(String password) {
+		double liquidatedAssets = 0.0;
+		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+			for (BankAccount bankaccount : userAccounts) {
+				liquidatedAssets += bankaccount.getBalance();
 			}
-			return liquidatedAssets; 
 		}
-		else {
-			return 0;  
-		}
-	}
-			
+		return liquidatedAssets;
+	}	
 }
-
-
-
-
-
-	
-	
-	
-
