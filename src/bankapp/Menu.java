@@ -2,41 +2,22 @@ package bankapp;
 
 import java.util.Scanner;
 
-interface InputCaretaker {
-	double getDouble();
-}
-
-class ScannerCaretaker implements InputCaretaker {
-	private Scanner scanner;
-
-	public ScannerCaretaker(Scanner scanner) {
-		this.scanner = scanner;
-	}
-
-	@Override
-	public double getDouble() {
-		return scanner.nextDouble();
-	}
-}
-
 public class Menu {
 
-	private InputCaretaker caretaker;
+	private Scanner in;
 	private BankAccount account;
-
 	
-	//Constructor
-	public Menu(InputCaretaker caretaker) {
-		this.caretaker = caretaker;
-		this.account = new BankAccount();
-	}
-
 	//not tested
 	public static void main(String[] args) {
-		Menu mainMenu = new Menu(new ScannerCaretaker(new Scanner(System.in)));
+		Menu mainMenu = new Menu();
 		mainMenu.displayingOptions();
 		double amount = mainMenu.getValidUserInput();
 		mainMenu.processingUserSelection(amount);
+	}
+	
+	//Constructor
+	public Menu() {
+		this.in = new Scanner(System.in);
 	}
 	
 	//Code that just displays stuff - no tests needed
@@ -44,14 +25,14 @@ public class Menu {
 		System.out.println("How much money do you want to deposit?");
 	}
 	
-	//Code that gets user input
+	//Code tha t gets user input
 	//No tests needed...for now (probably discuss in future class)
 	public double getValidUserInput() {
-		double amount = caretaker.getDouble();
+		double amount = in.nextDouble();
 		while(amount < 0) {
 			System.out.println("Invalid value!");
 			System.out.println("How much money do you want to deposit?");
-			amount = caretaker.getDouble();
+			amount = in.nextDouble();
 		}
 		return amount;
 	}
