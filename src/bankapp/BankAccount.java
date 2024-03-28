@@ -5,7 +5,7 @@ public class BankAccount {
 	private double balance;
 	private int ID;
 	private boolean isChecking;
-	private final User owner; // if ownership of a BankAccount cannot be changed
+	private final User owner; // if ownership of a BankAccount cannot/shouldn't be changed
 	
 	//Constructors - not tested
 	public BankAccount(boolean isChecking, User owner) {

@@ -3,32 +3,26 @@ import java.util.Scanner;
 import java.util.LinkedList;
 import bankapp.User;
 import bankapp.BankAccount;
-interface InputCaretaker {
-	double getDouble();
-	int getInt();
-	String getString();
-}
+import java.util.List;
+import java.util.Arrays;
+
+
+
+interface InputCaretaker {double getDouble(); int getInt(); String getString();}
+
 class ScannerCaretaker implements InputCaretaker {
 	private Scanner scanner;
 
-	public ScannerCaretaker(Scanner scanner) {
-		this.scanner = scanner;
-	}
+	public ScannerCaretaker(Scanner scanner) {this.scanner = scanner;}
 
 	@Override
-	public double getDouble() {
-		return scanner.nextDouble();
-	}
+	public double getDouble() {return scanner.nextDouble();}
 
 	@Override
-	public String getString() {
-		return scanner.nextLine();
-	}
+	public String getString() {return scanner.nextLine();}
 
 	@Override
-	public int getInt() {
-		return scanner.nextInt();
-	}
+	public int getInt() {return scanner.nextInt();}
 }
 public class Menu {
 
@@ -40,65 +34,19 @@ public class Menu {
 	private Boolean firstIteration = true;
 
 	//Constructor
-	public Menu(InputCaretaker caretaker) {
-		this.caretaker = caretaker;
-		this.accounts = new LinkedList<>();
-        this.accountIDs = new LinkedList<>();
-	}
+	public Menu(InputCaretaker caretaker) {this.caretaker = caretaker; this.accounts = new LinkedList<>(); this.accountIDs = new LinkedList<>();}
 	//not tested
 	public static void main(String[] args) {
 		Menu mainMenu = new Menu(new ScannerCaretaker(new Scanner(System.in)));
 		while (true) {
-			if (mainMenu.firstIteration) {
-				mainMenu.displayFirstIterationName();
-				String name = mainMenu.getString();
-				mainMenu.displayFirstIterationPassword();
-				String password = mainMenu.getString();
-				mainMenu.displayFirstIterationEnd();
-				User user = new User(name, password);
-				mainMenu.setUser(user);
-				mainMenu.addAccount(true, user);
-			}
-			mainMenu.displayingOptions();
-			int option = mainMenu.getOption();
-			while (option < 1 || option > 9) {
-				System.out.println("Invalid option!");
-				mainMenu.displayingOptions();
-				option = mainMenu.getOption();
-			}
-			if (option == 9) {
-				System.out.println("Exiting...");
-				System.exit(0);
-			}
-			mainMenu.executeSelectedOption(option);
-			mainMenu.firstIteration = false;
-		}
-	}
+			if (mainMenu.firstIteration) {mainMenu.displayFirstIterationName(); String name = mainMenu.getString(); mainMenu.displayFirstIterationPassword(); String password = mainMenu.getString(); mainMenu.displayFirstIterationEnd(); User user = new User(name, password); mainMenu.setUser(user); mainMenu.addAccount(true, user);}
+			mainMenu.displayingOptions(); int option = mainMenu.getOption();
+			while (option < 1 || option > 9) {System.out.println("Invalid option!"); mainMenu.displayingOptions(); option = mainMenu.getOption();}
+			if (option == 9) {System.out.println("Exiting..."); System.exit(0);} mainMenu.executeSelectedOption(option); mainMenu.firstIteration = false;}}
 	public void setUser(User user) {this.user = user;}
 	//Code that just displays stuff - no tests needed
-	public void displayingOptions() {
-		System.out.println("Choose from the following options: ");
-		System.out.println("1. Deposit");
-		System.out.println("2. Withdraw");
-		System.out.println("3. Transfer");
-		System.out.println("4. Check Balance");
-		System.out.println("5. Show Account Information");
-		System.out.println("6. Switch Account");
-		System.out.println("7. Create Account");
-		System.out.println("8. Delete Account");
-		System.out.println("9. Exit");
-	}
-	public void executeSelectedOption(int option){
-		System.out.println("You have selected option: " + option);
-		if (option == 1) {optionOne();} 
-		else if (option == 2) {optionTwo();} 
-		else if (option == 3) {optionThree();} 
-		else if (option == 4) {optionFour();} 
-		else if (option == 5) {optionFive();} 
-		else if (option == 6) {optionSix();} 
-		else if (option == 7) {optionSeven();} 
-		else if (option == 8) {optionEight();} 
-	}
+	public void displayingOptions() {List<String> options = Arrays.asList("Choose from the following options: ", "1. Deposit", "2. Withdraw", "3. Transfer", "4. Check Balance", "5. Show Account Information", "6. Switch Account", "7. Create Account", "8. Delete Account", "9. Exit"); for (String option : options) {System.out.println(option);}}
+	public void executeSelectedOption(int option){System.out.println("You have selected option: " + option); switch (option) {case 1: optionOne(); break; case 2: optionTwo(); break; case 3: optionThree(); break; case 4: optionFour(); break; case 5: optionFive(); break; case 6: optionSix(); break; case 7: optionSeven(); break; case 8: optionEight(); break;} }
 	public void optionOne() {
 		System.out.println("How much money do you want to deposit?");
 		double amount = getValidUserDeposit();
@@ -133,14 +81,7 @@ public class Menu {
 		}
 	}
 	public void optionFour() {System.out.println("Your balance is: " + account.getBalance());}
-	public void optionFive() {
-		System.out.println("Account Information: ");
-		for (BankAccount account : accounts) {
-			System.out.println("Account ID: " + account.getID());
-			System.out.println("Account Type: " + (account.isChecking() ? "Checking" : "Savings"));
-			System.out.println("Account Balance: " + account.getBalance());
-		}
-	}
+	public void optionFive() {System.out.println("Account Information: "); for (BankAccount account : accounts) {System.out.println("Account ID: " + account.getID()); System.out.println("Account Type: " + (account.isChecking() ? "Checking" : "Savings")); System.out.println("Account Balance: " + account.getBalance());}}
 	public void optionSix() {
 		if (accounts.size() < 2) {
 			System.out.println("You need at least two accounts to switch accounts");
@@ -198,51 +139,23 @@ public class Menu {
 		accounts.remove(accountIDs.indexOf(deleteID));
 	}
 	public int getOption() {return caretaker.getInt();}
-	public void displayFirstIterationName() {
-		System.out.println("Welcome to the bank!");
-		System.out.println("Enter your name: ");
-	}
+	public void displayFirstIterationName() {System.out.println("Welcome to the bank!"); System.out.println("Enter your name: ");}
 	public void displayFirstIterationPassword() {System.out.println("Enter your password: ");}
-	public void displayFirstIterationEnd() {
-		System.out.println("Thank you for entering your name and password!");
-		System.out.println("You can now proceed to the main menu. Have Fun!");
-	}
+	public void displayFirstIterationEnd() {System.out.println("Thank you for entering your name and password!"); System.out.println("You can now proceed to the main menu. Have Fun!");}
 	public String getString() {return caretaker.getString();}
 	//Code that gets user input
 	//No tests needed...for now (probably discuss in future class)
 	public double getValidUserDeposit() {
 		double amount = caretaker.getDouble();
-		while(amount <= 0) {
-			System.out.println("Invalid value!");
-			System.out.println("How much money do you want to deposit?");
-			amount = caretaker.getDouble();
-		}
-		return amount;
-	}
+		while(amount <= 0) {System.out.println("Invalid value!"); System.out.println("How much money do you want to deposit?"); amount = caretaker.getDouble();}
+		return amount;}
 	public double getValidUserWithdraw() {
 		double amount = caretaker.getDouble();
-		while(amount <= 0 || amount > account.getBalance()) {
-			System.out.println("Invalid value!");
-			System.out.println("How much money do you want to withdraw?");
-			amount = caretaker.getDouble();
-		}
-		return amount;
-	}
-	public void processingUserWithdraw(double amount) {
-		account.withdraw(amount);
-		System.out.println("Your balance is now: " + account.getBalance());
-	}
+		while(amount <= 0 || amount > account.getBalance()) {System.out.println("Invalid value!"); System.out.println("How much money do you want to withdraw?"); amount = caretaker.getDouble();}
+		return amount;}
+	public void processingUserWithdraw(double amount) {account.withdraw(amount); System.out.println("Your balance is now: " + account.getBalance());}
 	//Does work - needs tests
-	public void processingUserDeposit(double amount) {
-		account.deposit(amount);
-		System.out.println("Your balance is now: " + account.getBalance());
-	}
-	public void addAccount(Boolean isChecking, User user) {
-		BankAccount newAccount = new BankAccount(isChecking, user, 0.0);
-		user.addBankAccount(newAccount, user.getPassword());
-		this.accounts.add(newAccount);
-		this.accountIDs.add(newAccount.getID());
-		this.account = newAccount;
-	}	
+	public void processingUserDeposit(double amount) {account.deposit(amount); System.out.println("Your balance is now: " + account.getBalance());}
+	public void addAccount(Boolean isChecking, User user) {BankAccount newAccount = new BankAccount(isChecking, user, 0.0); user.addBankAccount(newAccount, user.getPassword()); this.accounts.add(newAccount); this.accountIDs.add(newAccount.getID()); this.account = newAccount;}	
 	public BankAccount getAccount() {return account;}
 }
