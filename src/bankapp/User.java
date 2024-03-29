@@ -1,10 +1,11 @@
 package bankapp;
+
 import java.util.Scanner;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class User { 
-	private LinkedList<BankAccount> userAccounts;  
+public class User {
+	private LinkedList<BankAccount> userAccounts;
 	private String password;
 	private String username;
 
@@ -33,36 +34,36 @@ public class User {
 	public boolean login(String password) {
 		return this.password.equals(Objects.requireNonNull(password, "Password must be non-null"));
 	}
-	
-	public boolean addBankAccount(BankAccount bankaccount, String password) {  
-		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+
+	public boolean addBankAccount(BankAccount bankaccount, String password) {
+		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
 			userAccounts.add(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
-			return true; 
-		} 
+			return true;
+		}
 		return false;
 	}
 
 	public boolean removeBankAccount(BankAccount bankaccount, String password) {
-		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
 			return userAccounts.remove(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 		}
 		return false;
 	}
-	
+
 	public int numberOfAccounts(String password) {
-		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
-			return userAccounts.size(); 
+		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
+			return userAccounts.size();
 		}
 		return 0;
 	}
-	
+
 	public double getLiquidatedAssets(String password) {
 		double liquidatedAssets = 0.0;
-		if(login(Objects.requireNonNull(password, "Password must be non-null"))) {
+		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
 			for (BankAccount bankaccount : userAccounts) {
 				liquidatedAssets += bankaccount.getBalance();
 			}
 		}
 		return liquidatedAssets;
-	}	
+	}
 }
