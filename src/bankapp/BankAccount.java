@@ -1,6 +1,6 @@
 package bankapp;
 
-public class BankAccount {
+public class BankAccount extends Assets {
 
 	private double balance;
 	private int ID;
@@ -13,11 +13,12 @@ public class BankAccount {
 	}
 
 	public BankAccount(boolean isChecking, User owner, double startBalance) {
+		super(0.0);
 		checkStartBalance(startBalance);
 		this.balance = startBalance;
-		this.ID = (int) (Math.random() * 1000000);
 		this.isChecking = isChecking;
 		this.owner = owner;
+	
 	}
 
 	private void checkStartBalance(double startBalance) {
