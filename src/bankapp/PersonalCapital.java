@@ -1,21 +1,53 @@
 package bankapp;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Objects;
 
-public class PersonalCapital  {
+public class PersonalCapital implements Serializable {
 
 		private boolean asset; 
 		private double liquidValue; 
-		private int ID; 
+		private int increaseID = 1; 
+		private int ID;//only used to generate hashcode for unique values
+		private static final long serialVersionUID = -2305810380054L;
 		
 		
 		public PersonalCapital (boolean asset, double liquidValue) {
 			this.asset = asset; 
 			this.liquidValue = liquidValue; 
-			this.ID =(int) (Math.random() * 1000000);
+			this.ID = increaseID++; 
 		}
 		
+	
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(ID);
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			PersonalCapital other = (PersonalCapital) obj;
+			return ID == other.ID;
+		}
+
+
+
+		public long getID(PersonalCapital pc) {
+			return pc.hashCode();
+		}
+
+
 		public double getLiquidValue(PersonalCapital pc) {
 			if(pc.asset == true) {
 				return this.liquidValue; 
@@ -45,14 +77,7 @@ public class PersonalCapital  {
 			}
 		}
 		public boolean removeItem(PersonalCapital pc, LinkedList<PersonalCapital>list) {
-			list.remove(pc);
-			int index = list.size() - 1; 
-			if (list.get(index) == pc) {
-				return false; 
-			}
-			else {
-				return true; 
-			}
+			return list.remove(pc);
 		}
 		
 		

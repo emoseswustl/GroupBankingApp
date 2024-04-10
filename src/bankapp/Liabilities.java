@@ -23,7 +23,7 @@ public class Liabilities extends PersonalCapital {
 		}
 		
 		public double getTotalLiquidValue() {
-			return -1 * (super.getTotalLiquidValue(liabilities)); 
+			return super.getTotalLiquidValue(liabilities); 
 		}
 		
 		public double getLiquidValue(Liabilities l) {

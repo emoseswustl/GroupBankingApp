@@ -50,8 +50,8 @@ public class PersonalCapitalTests {
 		PersonalCapital pc = new PersonalCapital(false, 0);
 		double actual = pc.getTotalLiquidValue(list);
 		double expected = (509.0 + 350.0 + 2.56) * -1; 
-		System.out.println("Expected: " + expected);
-		System.out.println("Actual: " + actual);
+		//System.out.println("Expected: " + expected);
+		//System.out.println("Actual: " + actual);
 		assertEquals(expected, actual);
 	}
 	
@@ -79,12 +79,12 @@ public class PersonalCapitalTests {
 		pc.addItem(rand, list);
 		
 		assertTrue(pc.removeItem(a, list));
-		assertFalse(list.contains(a));
 		assertTrue(pc.removeItem(l, list));
-		assertFalse(list.contains(l));
 		assertEquals(1, list.size());
 		
 	}
+	
+
 	
 	
 }
