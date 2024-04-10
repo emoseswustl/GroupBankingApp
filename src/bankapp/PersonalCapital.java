@@ -29,14 +29,14 @@ public class PersonalCapital  {
 		public double getTotalLiquidValue(LinkedList<PersonalCapital>list) {
 			double total = 0.0; 
 			for (PersonalCapital item : list) {
-				total += getLiquidValue(item); 
+				total += item.getLiquidValue(item); 
 			}
 			return total; 
 		}
 		
 		public boolean addItem(PersonalCapital pc, LinkedList<PersonalCapital>list) {
 			list.add(pc);
-			int index = list.size(); 
+			int index = list.size() - 1; 
 			if (list.get(index) == pc) {
 				return true; 
 			}
@@ -46,7 +46,7 @@ public class PersonalCapital  {
 		}
 		public boolean removeItem(PersonalCapital pc, LinkedList<PersonalCapital>list) {
 			list.remove(pc);
-			int index = list.size(); 
+			int index = list.size() - 1; 
 			if (list.get(index) == pc) {
 				return false; 
 			}
