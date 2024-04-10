@@ -3,8 +3,10 @@ package bankapp;
 import java.util.Scanner;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
+	private static final long serialVersionUID = -2305810380492L;
 	private LinkedList<BankAccount> userAccounts;
 	private String password;
 	private String username;
@@ -35,19 +37,23 @@ public class User {
 		return this.password.equals(Objects.requireNonNull(password, "Password must be non-null"));
 	}
 
-	public boolean addBankAccount(BankAccount bankaccount, String password) {
-		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
+	public boolean addBankAccount(BankAccount bankaccount) {
+		//if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
 			userAccounts.add(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 			return true;
-		}
-		return false;
+		//}
+		//return false;
+	}
+	
+	public LinkedList<BankAccount> getBankAccounts() {
+		return userAccounts;
 	}
 
-	public boolean removeBankAccount(BankAccount bankaccount, String password) {
-		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
+	public boolean removeBankAccount(BankAccount bankaccount) {
+		//if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
 			return userAccounts.remove(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
-		}
-		return false;
+		//}
+		//return false;
 	}
 
 	public int numberOfAccounts(String password) {
@@ -66,4 +72,5 @@ public class User {
 		}
 		return liquidatedAssets;
 	}
+
 }

@@ -1,7 +1,9 @@
 package bankapp;
 
-public class BankAccount extends Assets {
+import java.io.Serializable;
 
+public class BankAccount extends Assets implements Serializable {
+	private static final long serialVersionUID = 12348350183405813L;
 	private double balance;
 	private int ID;
 	private boolean isChecking;

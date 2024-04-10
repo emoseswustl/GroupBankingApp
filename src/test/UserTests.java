@@ -19,7 +19,7 @@ class UserTests {
 
     @BeforeEach
     void setUp() {
-        user = new User(CORRECT_PASSWORD);
+        user = new User("hello", CORRECT_PASSWORD);
         firstAccount = new BankAccount(true, user, 100.0);
         secondAccount = new BankAccount(true, user, 200.0);
     }

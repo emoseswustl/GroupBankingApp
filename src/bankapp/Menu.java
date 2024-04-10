@@ -1,6 +1,7 @@
 package bankapp;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -8,17 +9,24 @@ import java.util.Scanner;
 public class Menu {
 
 	private InputCaretaker caretaker;
-	private LinkedList<BankAccount> accounts = new LinkedList<>();
-	private LinkedList<Integer> accountIDs = new LinkedList<>();
-	private BankAccount account;
-	private User user;
+	
+	private HashMap<Integer, BankAccount> accounts;
+	private HashMap<String, User> users;
+	
+	private List<Integer> accountIDs;
+	
+	private BankAccount currentAccount;
+	private User currentUser;
 	private Boolean firstIteration = true;
-
+	private FileStorage bankAccts;
+	private FileStorage userAccts;
+	
 	// Constructor
 	public Menu(InputCaretaker caretaker) {
 		this.caretaker = caretaker;
-		this.accounts = new LinkedList<>();
-		this.accountIDs = new LinkedList<>();
+		this.accounts = new HashMap<Integer, BankAccount>();
+		this.users = new HashMap<String, User>();
+		this.accountIDs = new LinkedList<Integer>();
 	}
 
 	// not tested
@@ -30,7 +38,7 @@ public class Menu {
 		Menu mainMenu = new Menu(new ScannerCaretaker(new Scanner(System.in)));
 		while (true) {
 			if (mainMenu.firstIteration) {
-				initizalizeBank(mainMenu);
+				mainMenu.initizalizeBank();
 			}
 			getExecuteOptions(mainMenu);
 		}
@@ -46,27 +54,66 @@ public class Menu {
 		}
 		if (option == 9) {
 			System.out.println("Exiting...");
+			mainMenu.userAccts.writeMap(mainMenu.users);
+			mainMenu.bankAccts.writeMap(mainMenu.accounts);
 			System.exit(0);
 		}
 		mainMenu.executeSelectedOption(option);
 		mainMenu.firstIteration = false;
 	}
-
-	private static void initizalizeBank(Menu mainMenu) {
-		mainMenu.displayFirstIterationName();
-		String name = mainMenu.getString();
-		mainMenu.displayFirstIterationPassword();
-		String password = mainMenu.getString();
-		mainMenu.displayFirstIterationEnd();
-		User user = new User(name, password);
-		mainMenu.setUser(user);
-		mainMenu.addAccount(true, user);
+	
+	private void printUsers() {
+		System.out.println("List of users: ");
+		for (User person: users.values()) {
+			System.out.println(person.getUsername());
+		}
+		System.out.println();
 	}
 
-	
+	private void initizalizeBank() {
+		bankAccts = new FileStorage("accounts");
+		userAccts = new FileStorage("users");
+		if (bankAccts.readBankAcctMap() != null && userAccts.readUserMap() != null) {
+			accounts = bankAccts.readBankAcctMap();
+			users = userAccts.readUserMap();
+			
+			printUsers();
+			String userSelect = "";
+			while (users.get(userSelect) == null) {
+				System.out.println("Enter a valid username: ");
+				userSelect = getString();
+				String password = "";
+				while (!users.get(userSelect).getPassword().equals(password)) {
+					System.out.println("Enter your password: ");
+					password = getString();
+				}
+				currentUser = users.get(userSelect);
+				currentAccount = currentUser.getBankAccounts().getFirst();
+			}
+		} else {
+			displayFirstIterationName();
+			String name = getString();
+			displayFirstIterationPassword();
+			String password = getString();
+			displayFirstIterationEnd();
+			User user = new User(name, password);
+			createUser(name, user);
+			setUser(user);
+			currentAccount = new BankAccount(true, user, 10000);
+			user.addBankAccount(currentAccount);
+		}
+	}
 
 	public void setUser(User user) {
-		this.user = user;
+		this.currentUser = user;
+	}
+	
+	public void createUser(String name, User user) {
+		users.put(name, user);
+	}
+	
+	public User getUser(String name) {
+		return users.get(name);
 	}
 
 	// Code that just displays stuff - no tests needed
@@ -123,24 +170,28 @@ public class Menu {
 
 	public void optionThree() {
 		if (accounts.size() < 2) {
-			System.out.println("You need at least two accounts to transfer money");
+			System.out.println("T to transfer money");
 			return;
 		}
 
 		System.out.println("Choose from the following account IDs to transfer to: ");
-		accountIDs.clear();
+		//accountIDs.clear();
 
-		for (BankAccount account : accounts) {
+		for (BankAccount account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
-			accountIDs.add(account.getID());
+			//accountIDs.add(account.getID());
 		}
 
 		int recipientID = getOption();
 
-		while (!accountIDs.contains(recipientID)) {
+		while (accounts.get(recipientID) == null) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to transfer to: ");
-			for (BankAccount account : accounts) {
+			for (BankAccount account: accounts.values()) {
+				String output = "Account ID: " + account.getID();
+				if (account.getOwner().getUsername().equals(currentUser.getUsername())) {
+					output += " (Your Account)";
+				}
 				System.out.println("Account ID: " + account.getID());
 			}
 			recipientID = getOption();
@@ -148,12 +199,12 @@ public class Menu {
 	}
 
 	public void optionFour() {
-		System.out.println("Your balance is: " + account.getBalance());
+		System.out.println("Your balance is: " + currentAccount.getBalance());
 	}
 
 	public void optionFive() {
 		System.out.println("Account Information: ");
-		for (BankAccount account : accounts) {
+		for (BankAccount account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
 			System.out.println("Account Type: " + (account.isChecking() ? "Checking" : "Savings"));
 			System.out.println("Account Balance: " + account.getBalance());
@@ -167,7 +218,7 @@ public class Menu {
 		}
 		System.out.println("Choose the account ID to switch to: ");
 		accountIDs.clear();
-		for (BankAccount account : accounts) {
+		for (BankAccount account: currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
 			accountIDs.add(account.getID());
 		}
@@ -176,7 +227,7 @@ public class Menu {
 			System.out.println("Invalid account ID!");
 			switchID = getOption();
 		}
-		account = accounts.get(accountIDs.indexOf(switchID));
+		currentAccount = accounts.get(accountIDs.indexOf(switchID));
 	}
 
 	public void optionSeven() {
@@ -189,9 +240,13 @@ public class Menu {
 		}
 		System.out.println("Creating account...");
 		if (accountType == 1) {
-			accounts.add(new BankAccount(true, user, 0.0));
+			BankAccount checking = new BankAccount(true, currentUser, 0.0);
+			currentUser.addBankAccount(checking);
+			accounts.put(checking.getID(), checking);
 		} else {
-			accounts.add(new BankAccount(false, user, 0.0));
+			BankAccount savings = new BankAccount(false, currentUser, 0.0);
+			currentUser.addBankAccount(savings);
+			accounts.put(savings.getID(), savings);
 		}
 	}
 
@@ -202,7 +257,7 @@ public class Menu {
 		}
 		System.out.println("Choose from the following account IDs to delete an account: ");
 		accountIDs.clear();
-		for (BankAccount account : accounts) {
+		for (BankAccount account: currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
 			accountIDs.add(account.getID());
 		}
@@ -210,12 +265,14 @@ public class Menu {
 		while (!accountIDs.contains(deleteID)) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to delete an account: ");
-			for (BankAccount account : accounts) {
+			for (BankAccount account : currentUser.getBankAccounts()) {
 				System.out.println("Account ID: " + account.getID());
 			}
 			deleteID = getOption();
 		}
-		accounts.remove(accountIDs.indexOf(deleteID));
+		BankAccount toRemove = accounts.get(deleteID);
+		currentUser.removeBankAccount(toRemove);
+		accounts.remove(deleteID);
 	}
 
 	public int getOption() {
@@ -254,7 +311,7 @@ public class Menu {
 
 	public double getValidUserWithdraw() {
 		double amount = caretaker.getDouble();
-		while (amount <= 0 || amount > account.getBalance()) {
+		while (amount <= 0 || amount > currentAccount.getBalance()) {
 			System.out.println("Invalid value!");
 			System.out.println("How much money do you want to withdraw?");
 			amount = caretaker.getDouble();
@@ -263,25 +320,17 @@ public class Menu {
 	}
 
 	public void processingUserWithdraw(double amount) {
-		account.withdraw(amount);
-		System.out.println("Your balance is now: " + account.getBalance());
+		currentAccount.withdraw(amount);
+		System.out.println("Your balance is now: " + currentAccount.getBalance());
 	}
 
 	// Does work - needs tests
 	public void processingUserDeposit(double amount) {
-		account.deposit(amount);
-		System.out.println("Your balance is now: " + account.getBalance());
-	}
-
-	public void addAccount(Boolean isChecking, User user) {
-		BankAccount newAccount = new BankAccount(isChecking, user, 0.0);
-		user.addBankAccount(newAccount, user.getPassword());
-		this.accounts.add(newAccount);
-		this.accountIDs.add(newAccount.getID());
-		this.account = newAccount;
+		currentAccount.deposit(amount);
+		System.out.println("Your balance is now: " + currentAccount.getBalance());
 	}
 
 	public BankAccount getAccount() {
-		return account;
+		return this.currentAccount;
 	}
 }
