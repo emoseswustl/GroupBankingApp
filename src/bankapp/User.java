@@ -3,8 +3,10 @@ package bankapp;
 import java.util.Scanner;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
+	private static final long serialVersionUID = -2305810380492L;
 	private LinkedList<BankAccount> userAccounts;
 	private String password;
 	private String username;
