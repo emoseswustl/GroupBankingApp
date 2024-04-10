@@ -2,7 +2,7 @@ package bankapp;
 
 import java.io.Serializable;
 
-public class BankAccount implements Serializable{
+public class BankAccount extends Assets implements Serializable {
 	private static final long serialVersionUID = 12348350183405813L;
 	private double balance;
 	private int ID;
@@ -15,11 +15,12 @@ public class BankAccount implements Serializable{
 	}
 
 	public BankAccount(boolean isChecking, User owner, double startBalance) {
+		super(0.0);
 		checkStartBalance(startBalance);
 		this.balance = startBalance;
-		this.ID = (int) (Math.random() * 1000000);
 		this.isChecking = isChecking;
 		this.owner = owner;
+	
 	}
 
 	private void checkStartBalance(double startBalance) {
