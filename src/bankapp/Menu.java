@@ -201,10 +201,16 @@ public class Menu {
 				if (account.getOwner().getUsername().equals(currentUser.getUsername())) {
 					output += " (Your Account)";
 				}
-				System.out.println("Account ID: " + account.getID());
+				System.out.println(output);
 			}
 			recipientID = getOption();
 		}
+		
+		System.out.println("Enter an amount to transfer to " + recipientID + ".");
+		double amount = getValidUserWithdraw();
+		accounts.get(recipientID).deposit(amount);
+		currentAccount.withdraw(amount);
+		System.out.println("Your transfer of $" + amount + " to " + recipientID + " succeeded.");
 	}
 
 	public void optionFour() {
