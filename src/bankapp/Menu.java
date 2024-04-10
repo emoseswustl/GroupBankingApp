@@ -74,34 +74,43 @@ public class Menu {
 		bankAccts = new FileStorage("accounts");
 		userAccts = new FileStorage("users");
 		if (bankAccts.readBankAcctMap() != null && userAccts.readUserMap() != null) {
+			System.out.println("Database files loaded! \n");
 			accounts = bankAccts.readBankAcctMap();
 			users = userAccts.readUserMap();
 			
 			printUsers();
 			String userSelect = "";
 			while (users.get(userSelect) == null) {
-				System.out.println("Enter a valid username: ");
-				userSelect = getString();
-				String password = "";
-				while (!users.get(userSelect).getPassword().equals(password)) {
-					System.out.println("Enter your password: ");
-					password = getString();
+				if (userSelect.equals("new")) {
+					createNewAccounts();
+					return;
 				}
-				currentUser = users.get(userSelect);
-				currentAccount = currentUser.getBankAccounts().getFirst();
+				System.out.println("Enter a valid username, or type \"new\" to make a new account: ");
+				userSelect = getString();
 			}
+			String password = "";
+			while (!users.get(userSelect).getPassword().equals(password)) {
+				System.out.println("Enter your password: ");
+				password = getString();
+			}
+			currentUser = users.get(userSelect);
+			currentAccount = currentUser.getBankAccounts().getFirst();
 		} else {
-			displayFirstIterationName();
-			String name = getString();
-			displayFirstIterationPassword();
-			String password = getString();
-			displayFirstIterationEnd();
-			User user = new User(name, password);
-			createUser(name, user);
-			setUser(user);
-			currentAccount = new BankAccount(true, user, 10000);
-			user.addBankAccount(currentAccount);
+			createNewAccounts();
 		}
+	}
+	
+	private void createNewAccounts() {
+		displayFirstIterationName();
+		String name = getString();
+		displayFirstIterationPassword();
+		String password = getString();
+		displayFirstIterationEnd();
+		User user = new User(name, password);
+		createUser(name, user);
+		setUser(user);
+		currentAccount = new BankAccount(true, user, 10000);
+		user.addBankAccount(currentAccount);
 	}
 
 	public void setUser(User user) {
