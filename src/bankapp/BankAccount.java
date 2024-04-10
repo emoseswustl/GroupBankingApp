@@ -102,4 +102,9 @@ public class BankAccount extends Assets implements Serializable {
 	public User getOwner() {
 		return this.owner;
 	}
+
+    public int LoanSetUp() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'LoanSetUp'");
+    }
 }
