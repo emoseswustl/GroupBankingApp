@@ -21,13 +21,16 @@ public class Menu {
 	private FileStorage bankAccts;
 	private FileStorage userAccts;
 	
+	public Menu(Scanner scanner) {
+        this(new ScannerCaretaker(scanner));
+    }
 	// Constructor
 	public Menu(InputCaretaker caretaker) {
-		this.caretaker = caretaker;
-		this.accounts = new HashMap<Integer, BankAccount>();
-		this.users = new HashMap<String, User>();
-		this.accountIDs = new LinkedList<Integer>();
-	}
+        this.caretaker = caretaker;
+        this.accounts = new HashMap<Integer, BankAccount>();
+        this.users = new HashMap<String, User>();
+        this.accountIDs = new LinkedList<Integer>();
+    }
 
 	// not tested
 	public static void main(String[] args) {
@@ -139,79 +142,128 @@ public class Menu {
 		System.out.println("You have selected option: " + option);
 		switch (option) {
 			case 1:
-				optionOne();
+				menuDeposit();
 				break;
 			case 2:
-				optionTwo();
+				menuWithdraw();
 				break;
 			case 3:
-				optionThree();
+				menuTransfer();
 				break;
 			case 4:
-				optionFour();
+				menuCheckBalance();
 				break;
 			case 5:
-				optionFive();
+				menuAccountInformation();
 				break;
 			case 6:
-				optionSix();
+				menuSwitchAccounts();
 				break;
 			case 7:
-				optionSeven();
+				menuCreateAccount();
 				break;
 			case 8:
-				optionEight();
+				menuDeleteAccount();
 				break;
 		}
 	}
 
-	public void optionOne() {
+	public void menuDeposit() {
 		System.out.println("How much money do you want to deposit?");
 		double amount = getValidUserDeposit();
 		processingUserDeposit(amount);
+
 	}
 
-	public void optionTwo() {
+	public void menuWithdraw() {
 		System.out.println("How much money do you want to withdraw?");
 		double amount = getValidUserWithdraw();
 		processingUserWithdraw(amount);
 	}
 
-	public void optionThree() {
-		if (accounts.size() < 2) {
-			System.out.println("T to transfer money");
+	public void menuTransfer() {
+		if (currentUser.getBankAccounts().size() < 2) {
+			System.out.println("You need at least two accounts to transfer money.");
 			return;
 		}
 
-		System.out.println("Choose from the following account IDs to transfer to: ");
-		//accountIDs.clear();
-
+		System.out.println("Choose from the following account IDs to transfer from: ");
 		for (BankAccount account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
-			//accountIDs.add(account.getID());
+		}
+
+		int senderID = getOption();
+		BankAccount senderAccount = null;
+		for (BankAccount account : currentUser.getBankAccounts()) {
+			if (account.getID() == senderID) {
+				senderAccount = account;
+				break;
+			}
+		}
+
+		while (senderAccount == null) {
+			System.out.println("Invalid account ID!");
+			System.out.println("Choose from the following account IDs to transfer from: ");
+			for (BankAccount account : currentUser.getBankAccounts()) {
+				System.out.println("Account ID: " + account.getID());
+			}
+			senderID = getOption();
+			for (BankAccount account : currentUser.getBankAccounts()) {
+				if (account.getID() == senderID) {
+					senderAccount = account;
+					break;
+				}
+			}
+		}
+
+		System.out.println("Choose from the following account IDs to transfer to: ");
+		for (BankAccount account : currentUser.getBankAccounts()) {
+			if (account != senderAccount) {
+				System.out.println("Account ID: " + account.getID());
+			}
 		}
 
 		int recipientID = getOption();
+		BankAccount recipientAccount = null;
+		for (BankAccount account : currentUser.getBankAccounts()) {
+			if (account.getID() == recipientID && account != senderAccount) {
+				recipientAccount = account;
+				break;
+			}
+		}
 
-		while (accounts.get(recipientID) == null) {
+		while (recipientAccount == null) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to transfer to: ");
-			for (BankAccount account: accounts.values()) {
-				String output = "Account ID: " + account.getID();
-				if (account.getOwner().getUsername().equals(currentUser.getUsername())) {
-					output += " (Your Account)";
+			for (BankAccount account : currentUser.getBankAccounts()) {
+				if (account != senderAccount) {
+					System.out.println("Account ID: " + account.getID());
 				}
-				System.out.println("Account ID: " + account.getID());
 			}
 			recipientID = getOption();
+			for (BankAccount account : currentUser.getBankAccounts()) {
+				if (account.getID() == recipientID && account != senderAccount) {
+					recipientAccount = account;
+					break;
+				}
+			}
 		}
+
+		System.out.println("Enter the amount to transfer: ");
+		double amount = getValidUserWithdraw();
+
+		senderAccount.transfer(amount, recipientAccount);
+
+		System.out.println("Transfer successful!");
+		System.out.println("Sender Account Balance: " + senderAccount.getBalance());
+		System.out.println("Recipient Account Balance: " + recipientAccount.getBalance());
 	}
 
-	public void optionFour() {
+	public void menuCheckBalance() {
 		System.out.println("Your balance is: " + currentAccount.getBalance());
 	}
 
-	public void optionFive() {
+	public void menuAccountInformation() {
 		System.out.println("Account Information: ");
 		for (BankAccount account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
@@ -220,7 +272,7 @@ public class Menu {
 		}
 	}
 
-	public void optionSix() {
+	public void menuSwitchAccounts() {
 		if (accounts.size() < 2) {
 			System.out.println("You need at least two accounts to switch accounts");
 			return;
@@ -239,7 +291,7 @@ public class Menu {
 		currentAccount = accounts.get(accountIDs.indexOf(switchID));
 	}
 
-	public void optionSeven() {
+	public void menuCreateAccount() {
 		System.out.println("Do you want to create a (1) checking account or a (2) savings account? ");
 		int accountType = getOption();
 		while (accountType != 1 && accountType != 2) {
@@ -259,7 +311,7 @@ public class Menu {
 		}
 	}
 
-	public void optionEight() {
+	public void menuDeleteAccount() {
 		if (accounts.size() < 1) {
 			System.out.println("You need at least one account to delete an account");
 			return;
