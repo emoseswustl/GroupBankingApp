@@ -67,4 +67,9 @@ public class User implements Serializable {
 		return liquidatedAssets;
 	}
 
+    public int LoanSetUp() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'LoanSetUp'");
+    }
+
 }
