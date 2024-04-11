@@ -1,3 +1,7 @@
+package bankapp;
+
+import java.util.Scanner;
+
 public class LoanSetUp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);

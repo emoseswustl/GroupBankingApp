@@ -43,8 +43,8 @@ public class PersonalCapital implements Serializable {
 
 
 
-		public long getID(PersonalCapital pc) {
-			return pc.hashCode();
+		public int getID() {
+			return this.hashCode();
 		}
 
 

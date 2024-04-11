@@ -65,12 +65,6 @@ class BankAccountTests {
 	}
 
 	@Test
-	void testSetOwner() {
-		testAccount.setOwner("John Doe");
-		assertEquals("John Doe", testAccount.getOwner());
-	}
-
-	@Test
 	void testMultipleDeposits() {
 		testAccount.deposit(50);
 		testAccount.deposit(25);

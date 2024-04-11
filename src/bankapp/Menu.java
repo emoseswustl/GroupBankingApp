@@ -23,6 +23,8 @@ public class Menu {
 	
 	public Menu(Scanner scanner) {
         this(new ScannerCaretaker(scanner));
+        this.accounts = new HashMap<Integer, BankAccount>();
+        this.users = new HashMap<String, User>();
     }
 	// Constructor
 	public Menu(InputCaretaker caretaker) {
@@ -103,6 +105,15 @@ public class Menu {
 		}
 	}
 	
+	private void getLoadMaps() {
+		bankAccts = new FileStorage("accounts");
+		userAccts = new FileStorage("users");
+		if (bankAccts.readBankAcctMap() != null && userAccts.readUserMap() != null) {
+			accounts = bankAccts.readBankAcctMap();
+			users = userAccts.readUserMap();
+		}
+	}
+	
 	private void createNewAccounts() {
 		displayFirstIterationName();
 		String name = getString();
@@ -172,7 +183,6 @@ public class Menu {
 		System.out.println("How much money do you want to deposit?");
 		double amount = getValidUserDeposit();
 		processingUserDeposit(amount);
-
 	}
 
 	public void menuWithdraw() {
@@ -302,12 +312,10 @@ public class Menu {
 		System.out.println("Creating account...");
 		if (accountType == 1) {
 			BankAccount checking = new BankAccount(true, currentUser, 0.0);
-			currentUser.addBankAccount(checking);
-			accounts.put(checking.getID(), checking);
+			addAccount(checking);
 		} else {
 			BankAccount savings = new BankAccount(false, currentUser, 0.0);
-			currentUser.addBankAccount(savings);
-			accounts.put(savings.getID(), savings);
+			addAccount(savings);
 		}
 	}
 
@@ -389,6 +397,15 @@ public class Menu {
 	public void processingUserDeposit(double amount) {
 		currentAccount.deposit(amount);
 		System.out.println("Your balance is now: " + currentAccount.getBalance());
+	}
+	
+	public void addAccount(BankAccount account) {
+		currentUser.addBankAccount(account);
+		accounts.put(account.getID(), account);
+	}
+	
+	public void setCurrentAccount(BankAccount account) {
+		this.currentAccount = account;
 	}
 
 	public BankAccount getAccount() {
