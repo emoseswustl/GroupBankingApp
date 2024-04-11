@@ -52,12 +52,12 @@ public class Menu {
 	private static void getExecuteOptions(Menu mainMenu) {
 		mainMenu.displayingOptions();
 		int option = mainMenu.getOption();
-		while (option < 1 || option > 9) {
+		while (option < 1 || option > 10) {
 			System.out.println("Invalid option!");
 			mainMenu.displayingOptions();
 			option = mainMenu.getOption();
 		}
-		if (option == 9) {
+		if (option == 10) {
 			System.out.println("Exiting...");
 			mainMenu.userAccts.writeMap(mainMenu.users);
 			mainMenu.bankAccts.writeMap(mainMenu.accounts);
@@ -143,7 +143,7 @@ public class Menu {
 	public void displayingOptions() {
 		List<String> options = Arrays.asList("Choose from the following options: ", "1. Deposit", "2. Withdraw",
 				"3. Transfer", "4. Check Balance", "5. Show Account Information", "6. Switch Account",
-				"7. Create Account", "8. Delete Account", "9. Exit");
+				"7. Create Account", "8. Delete Account", "9. Loans", "10. Exit");
 		for (String option : options) {
 			System.out.println(option);
 		}
@@ -176,6 +176,8 @@ public class Menu {
 			case 8:
 				menuDeleteAccount();
 				break;
+			case 9:
+			   menuLoans();
 		}
 	}
 
@@ -347,6 +349,11 @@ public class Menu {
 	public int getOption() {
 		return caretaker.getInt();
 	}
+
+	public int menuLoans(){
+		return currentAccount.LoanSetUp(); 
+	}
+
 
 	public void displayFirstIterationName() {
 		System.out.println("Welcome to the bank!");
