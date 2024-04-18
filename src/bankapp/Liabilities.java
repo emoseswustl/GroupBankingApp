@@ -7,7 +7,8 @@ public class Liabilities extends PersonalCapital {
 		private LinkedList<PersonalCapital>liabilities = new LinkedList<>(); 
 		
 		public Liabilities (double liquidValue) {
-			super(false, liquidValue); 
+			super(false, liquidValue);
+			addItem(this);
 		}
 		
 		public boolean addItem(Liabilities l) {
