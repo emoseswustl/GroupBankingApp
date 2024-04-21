@@ -1,6 +1,6 @@
 package bankapp;
 
-public class Mortgage extends Liabilities {
+public class Mortgage extends PersonalCapital {
 	
 	private double amount; 
 	private double interestRate; 
@@ -8,14 +8,28 @@ public class Mortgage extends Liabilities {
 	private double mortgagePayment; 
 	private final double lateFee = 0.03; 
 	private double amountPaid; 
+	private String name; 
 
-	public Mortgage (double amount, double interestRate, int term) {
-		super(amount);
+	public Mortgage (String name, double amount, double interestRate, int term) {
+		super(false, amount);
 		setAmount(amount);
 		this.interestRate = interestRate; 
 		this.term = term; 
 		this.amountPaid = 0; 
 		this.mortgagePayment = this.setMonthlyPayment();
+		this.name = name; 
+		
+	}
+	
+	public String toString(Mortgage m) {
+		String s = "";
+		s = "name: " + this.name + ", amount remaining: " + this.amount + ", years remaining: " + this.term + ", interest rate: " + this.interestRate + ", amount paid this month: " + this.amountPaid;
+		return s; 
+	}
+	
+	
+	public String getName() {
+		return this.name; 
 	}
 	
 	public double setMonthlyPayment() {
@@ -58,7 +72,7 @@ public class Mortgage extends Liabilities {
 		return amountPaid;
 	}
 	
-	public void payMortgage(double money, BankAccount account, boolean onTimeOrEarly) {
+	public void payMortgage(double money, BankAccount account, boolean onTimeOrEarly, User currentUser) {
 		this.setMonthlyPayment(); 
 		double interest = getInterestPayment(); //this needs to go to the bank
 		double total = interest + this.mortgagePayment;
@@ -66,7 +80,7 @@ public class Mortgage extends Liabilities {
 			if(money >= total) {
 			double finalPayment = money - this.mortgagePayment; 
 			account.withdraw(finalPayment); 
-			this.removeItem(this);
+			this.amount = 0; 
 			}
 		}
 		if(money < total) {

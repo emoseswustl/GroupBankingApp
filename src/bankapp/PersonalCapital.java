@@ -5,22 +5,22 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class PersonalCapital implements Serializable {
+public class PersonalCapital  {
 
 		private boolean asset; 
-		private double liquidValue; 
+		public double liquidValue; 
 		private int increaseID = 1; 
 		private int ID;//only used to generate hashcode for unique values
 		private static final long serialVersionUID = -2305810380054L;
-		
+	//	public User currentUser; 
 		
 		public PersonalCapital (boolean asset, double liquidValue) {
 			this.asset = asset; 
 			this.liquidValue = liquidValue; 
-			this.ID = increaseID++; 
+			this.ID = increaseID++;
+			
 		}
 		
-	
 
 		@Override
 		public int hashCode() {
@@ -58,28 +58,22 @@ public class PersonalCapital implements Serializable {
 			
 		}
 		
-		public double getTotalLiquidValue(LinkedList<PersonalCapital>list) {
+		public double getTotalLiquidValue(User currentUser, boolean asset) {
 			double total = 0.0; 
-			for (PersonalCapital item : list) {
+			if(asset == false) {
+			for (PersonalCapital item : currentUser.l.liabilities) {
 				total += item.getLiquidValue(item); 
+			}
+			}
+			if(asset == true) {
+			for(PersonalCapital item : currentUser.a.assets) {
+				total += item.getLiquidValue(item);
+			}
 			}
 			return total; 
 		}
 		
-		public boolean addItem(PersonalCapital pc, LinkedList<PersonalCapital>list) {
-			list.add(pc);
-			int index = list.size() - 1; 
-			if (list.get(index) == pc) {
-				return true; 
-			}
-			else {
-				return false; 
-			}
-		}
-		public boolean removeItem(PersonalCapital pc, LinkedList<PersonalCapital>list) {
-			return list.remove(pc);
-		}
-		
+	
 		
 	}
 

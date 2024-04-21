@@ -186,4 +186,25 @@ public class MenuTests {
         assertEquals(2, user.getBankAccounts().size());
         assertEquals(account2, user.getBankAccounts().getFirst());
     }
+
+
+@Test
+public void testassets() {
+	InputStream in = new ByteArrayInputStream("1\n".getBytes());
+	User x = new User(" ", " ");
+	x.assetsAndLiabilities(in);
+			
+	}
+@Test
+public void testLiabilities() {
+	InputStream in = new ByteArrayInputStream("2\n".getBytes());
+	User x = new User(" ", " ");
+	x.assetsAndLiabilities(in);
+}
+@Test
+public void testInvalid() {
+	InputStream in = new ByteArrayInputStream("5\n3\n".getBytes());
+	User x = new User(" ", " ");
+	x.assetsAndLiabilities(in);
+}
 }

@@ -15,7 +15,7 @@ public class BankAccount extends Assets implements Serializable {
 	}
 
 	public BankAccount(boolean isChecking, User owner, double startBalance) {
-		super(0.0);
+		super();
 		checkStartBalance(startBalance);
 		this.balance = startBalance;
 		this.isChecking = isChecking;

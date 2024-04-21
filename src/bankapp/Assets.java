@@ -4,26 +4,27 @@ import java.util.LinkedList;
 
 public class Assets extends PersonalCapital {
 	
-	private LinkedList<PersonalCapital>assets = new LinkedList<>(); 
+	public LinkedList<PersonalCapital>assets = new LinkedList<>(); 
 	
-	public Assets (double liquidValue) {
-		super(true, liquidValue); 
+	public Assets() {
+		super(true, 0);
+		this.assets = new LinkedList<PersonalCapital>(); 
 	}
 	
-	public boolean addItem(Assets a) {
-		return super.addItem(a, assets); 
+	public LinkedList<PersonalCapital> getAssetList(){
+		return this.assets;	
 	}
 	
-	public boolean removeItem(Assets a) {
-		return super.removeItem(a, assets);
-	}
 	
 	public PersonalCapital get(int i) {
-		return assets.get(i);
+		return assets.get(i); 
 	}
 	
-	public double getTotalLiquidValue() {
-		return super.getTotalLiquidValue(assets); 
+	public double getTotalLiquidValue(User currentUser) {
+		return super.getTotalLiquidValue(currentUser, true); 
+	}
+	public int getTotalNumberofAssets() {
+		return this.assets.size(); 
 	}
 }
 
