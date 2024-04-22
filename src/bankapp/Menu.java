@@ -380,7 +380,7 @@ public static double calculateLoanPayment(double principal, double annualInteres
 	// Display the monthly payment to the user
 	System.out.printf("Your monthly loan payment is: $%.2f%n", monthlyPayment);
 
-	scanner.close();
+	
 	return monthlyPayment;
 }
 
