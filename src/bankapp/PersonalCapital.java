@@ -14,10 +14,10 @@ public class PersonalCapital {
 	private User owner;
 	private static final long serialVersionUID = -2305810380054L;
 
-	public PersonalCapital(boolean asset, double liquidValue, User owner) {
+	public PersonalCapital(boolean asset, double liquidValue, User owner, int ID) {
 		this.asset = asset;
 		this.liquidValue = liquidValue;
-		this.ID = increaseID++;
+		this.ID = ID;
 		this.owner = owner;
 	}
 
@@ -41,48 +41,83 @@ public class PersonalCapital {
 	public long getID() {
 		return ID;
 	}
-
-	public double getLiquidValue(PersonalCapital pc) {
-		if (pc.asset == true) {
+	
+	public double getLiquidValue() {
+		if (this.asset == true) {
 			return this.liquidValue;
 		} else {
 			return -1 * this.liquidValue;
 		}
-
-	}
-
-	public double getTotalLiquidValue(boolean asset) {
-		double total = 0.0;
-		LinkedList<PersonalCapital> accounts;
-		
-		if (asset) {
-			accounts = owner.getAssets();
-		} else {
-			accounts = owner.getLiabilities();
-		}
-		
-		for (PersonalCapital item: accounts) {
-			total += item.getLiquidValue(item);
-		}
-		
-		return total;
 	}
 	
-	public double getNetWorth() {
-		double total = 0.0;
-		LinkedList<PersonalCapital> accounts;
-		
-		if (asset) {
-			accounts = owner.getAssets();
-		} else {
-			accounts = owner.getLiabilities();
+	private void checkStartBalance(double startBalance) {
+		if (startBalance < 0)
+			throw new IllegalArgumentException("Start balance must be non-negative");
+	}
+
+	public void deposit(double amount) {
+		validateAmountPositive(amount);
+		synchronized (this) { // Prevent race-condition vulnerability/exploit ensures single thread access
+			this.liquidValue += amount;
 		}
-		
-		for (PersonalCapital item: accounts) {
-			total += item.getLiquidValue(item);
+	}
+
+	public double withdraw(double amount) {
+		validateAmountPositive(amount);
+		synchronized (this) {
+			validateSufficientBalance(amount);
+			this.liquidValue -= amount;
 		}
-		
-		return total;
+		return amount;
+	}
+
+	private void validateAmountPositive(double amount) {
+		if (amount < 0) {
+			throw new IllegalArgumentException("Amount must be positive");
+		}
+	}
+
+	private void validateSufficientBalance(double amount) {
+		if (amount > this.liquidValue) {
+			throw new IllegalArgumentException("Amount must be less than or equal to balance");
+		}
+	}
+
+	public void transfer(double amount, BankAccount recipient) {
+		validateTransfer(amount, recipient);
+		synchronized (this) {
+			this.withdraw(amount);
+			recipient.deposit(amount);
+		}
+	}
+
+	private void validateTransfer(double amount, BankAccount recipient) {
+		if (recipient == null) {
+			throw new IllegalArgumentException("Recipient can't be null");
+		}
+		if (recipient == this) {
+			throw new IllegalArgumentException("Can't transfer to self");
+		}
+		if (amount <= 0) {
+			throw new IllegalArgumentException("Amount must be positive");
+		}
+		if (amount > this.liquidValue) {
+			throw new IllegalArgumentException("Amount must be less than or equal to balance");
+		}
+	}
+
+	public double cashOut() {
+		synchronized (this) {
+			return this.withdraw(this.liquidValue);
+		}
+	}
+	
+	public double getBalance() {
+		return this.liquidValue;
+	}
+	
+	public User getOwner() {
+		return this.owner;
 	}
 
 }

@@ -433,15 +433,6 @@ public class Menu {
 		}
 	}
 
-public RetirementFund findFund() {
-	for(int i = 0; i < currentUser.assetList.assets.size(); i++) {
-		if(currentUser.assetList.assets.get(i) instanceof RetirementFund) {
-			return (RetirementFund)currentUser.assetList.assets.get(i);
-		}
-	}
-	return null; 
-}
-
 		public void menuLiabilities() {
 			System.out.println("You are now viewing liabilities.");
 			//will fix below line, discussing implementing the lists into bank account class

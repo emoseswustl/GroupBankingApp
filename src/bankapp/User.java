@@ -17,8 +17,8 @@ public class User implements Serializable {
 		this.userAccounts = new LinkedList<BankAccount>();
 		this.username = Objects.requireNonNull(username, "Username must be non-null");
 		this.password = Objects.requireNonNull(password, "Password must be non-null");
-		this.liabilityList = new Liabilities();
-		this.assetList = new Assets();
+		this.liabilityList = new Liabilities(this);
+		this.assetList = new Assets(this);
 	}
 	
 	public LinkedList<PersonalCapital> getLiabilities() {
@@ -78,7 +78,38 @@ public class User implements Serializable {
 		}
 		return liquidatedAssets;
 	}
+	
+	public RetirementFund findFund() {
+		for(int i = 0; i < assetList.getAssetList().size(); i++) {
+			if(assetList.getAssetList().get(i) instanceof RetirementFund) {
+				return (RetirementFund) assetList.getAssetList().get(i);
+			}
+		}
+		return null; 
+	}
 
+	public double getNetWorth() {
+		double total = 0.0;		
+		
+		for (PersonalCapital item: this.getAssets()) {
+			total += item.getLiquidValue();
+		}
+		
+		for (PersonalCapital item: this.getLiabilities()) {
+			total += item.getLiquidValue();
+		}
+		
+		return total;
+	}
+	
+	public double getAssetBalance() {
+		return assetList.getTotalLiquidValue();
+	}
+	
+	public double getLiabilityBalance() {
+		return liabilityList.getTotalLiquidValue();
+	}
+	
     public int LoanSetUp() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'LoanSetUp'");
