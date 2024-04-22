@@ -376,7 +376,7 @@ public class Menu {
 			System.out.println("3. Exit");
 			int option = caretaker.getInt(); 
 			if(option == 1) {
-				for(PersonalCapital pc : currentUser.a.assets) {
+				for(PersonalCapital pc : currentUser.assetList.assets) {
 					int id = pc.getID();//fix ID method 
 					Double val = pc.getLiquidValue(pc); 
 					System.out.println(id + " value: " + val); 
@@ -409,7 +409,7 @@ public class Menu {
 					System.out.println("What is the annual rate you would like to contribute?");
 					double rate = caretaker.getDouble(); 
 					RetirementFund retirementfund = new RetirementFund(rate, income);
-					currentUser.a.assets.add(retirementfund);
+					currentUser.assetList.assets.add(retirementfund);
 				}
 				
 			} 
@@ -424,9 +424,9 @@ public class Menu {
 	}
 
 public RetirementFund findFund() {
-	for(int i = 0; i < currentUser.a.assets.size(); i++) {
-		if(currentUser.a.assets.get(i) instanceof RetirementFund) {
-			return (RetirementFund)currentUser.a.assets.get(i);
+	for(int i = 0; i < currentUser.assetList.assets.size(); i++) {
+		if(currentUser.assetList.assets.get(i) instanceof RetirementFund) {
+			return (RetirementFund)currentUser.assetList.assets.get(i);
 		}
 	}
 	return null; 
@@ -447,7 +447,7 @@ public RetirementFund findFund() {
 				System.out.println("6. Exit");
 				int option = caretaker.getInt(); 
 				if(option == 1) {
-					for(PersonalCapital pc : currentUser.l.liabilities) {
+					for(PersonalCapital pc : currentUser.getLiabilities()) {
 						int id2 = pc.getID();//fix ID method 
 						Double val = pc.getLiquidValue(pc); 
 						System.out.println(id2 + " value: " + val); 
@@ -457,9 +457,9 @@ public RetirementFund findFund() {
 					System.out.println("Which liabilitiy would you like to remove? Enter ID number");
 					int idnum = caretaker.getInt(); 
 					boolean success = false; 
-					for(PersonalCapital x : currentUser.l.liabilities) {
+					for(PersonalCapital x : currentUser.liabilityList.liabilities) {
 						if(x.getID() == idnum) { //fix ID method 
-							 success = currentUser.l.liabilities.remove(x); 
+							 success = currentUser.liabilityList.liabilities.remove(x); 
 						}
 					}
 					if(success == true) {
@@ -484,7 +484,7 @@ public RetirementFund findFund() {
 						System.out.println("How many years is your mortgage?");
 						int years = caretaker.getInt(); 
 						Mortgage newM = new Mortgage(name, due, rate, years);
-						currentUser.l.liabilities.add(newM);
+						currentUser.liabilityList.liabilities.add(newM);
 					}
 					else if(op == 2) {
 						//need to add with loan attributes 
@@ -496,11 +496,11 @@ public RetirementFund findFund() {
 				else if(option == 5) {
 					System.out.println("You are accessing mortgages.");
 					int count = 0; 
-					for(int i = 0; i < currentUser.l.liabilities.size(); i++) {
+					for(int i = 0; i < currentUser.liabilityList.liabilities.size(); i++) {
 						Object Mortgage;
-						if((currentUser.l.liabilities.get(i)).equals(Mortgage)) {
+						if((currentUser.liabilityList.liabilities.get(i)).equals(Mortgage)) {
 							count++; 
-							System.out.println(count + "." + currentUser.l.liabilities.get(i).toString());
+							System.out.println(count + "." + currentUser.liabilityList.liabilities.get(i).toString());
 							
 						}
 					}
@@ -515,7 +515,7 @@ public RetirementFund findFund() {
 					if(select == 1) {
 						System.out.println("What mortgage would you like to pay? Select number from list abbove");
 						int wow = caretaker.getInt();
-						Mortgage paying = (Mortgage)currentUser.l.liabilities.get(wow);
+						Mortgage paying = (Mortgage)currentUser.liabilityList.liabilities.get(wow);
 						double total = paying.getInterestPayment() + paying.getMortgagePayment(); 
 						System.out.println("Your mortgage due this month is: " + total + ". How much are you paying today?");
 						double money = caretaker.getDouble(); 
@@ -564,7 +564,7 @@ public RetirementFund findFund() {
 					else if(option == 2) {
 						System.out.println("What mortgage would you like to see? Select number from list abbove");
 						int wow = caretaker.getInt();
-						Mortgage view = (Mortgage)currentUser.l.liabilities.get(wow);
+						Mortgage view = (Mortgage)currentUser.liabilityList.liabilities.get(wow);
 						double total = view.getInterestPayment() + view.getMortgagePayment(); 
 						System.out.println("Payment of " + total + " due to this month");
 					}

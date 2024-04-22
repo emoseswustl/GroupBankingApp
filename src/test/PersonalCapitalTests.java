@@ -20,25 +20,25 @@ public class PersonalCapitalTests {
 	    public void setUp() {
 	       user = new User("testuser", "password");
 	        // Add some assets and liabilities for testing
-	        user.a.assets.add(new PersonalCapital(true, 1000));
-	        user.l.liabilities.add(new PersonalCapital(false, 500));
+	        user.assetList.assets.add(new PersonalCapital(true, 1000));
+	        user.liabilityList.liabilities.add(new PersonalCapital(false, 500));
 	    }
 
 	    @Test
 	    public void testListCreation() {
-	        assertNotNull(user.l.liabilities);
-	        assertNotNull(user.a.assets);
+	        assertNotNull(user.liabilityList.liabilities);
+	        assertNotNull(user.assetList.assets);
 	    }
 	    
 	    @Test 
 	    public void testGetTotalLiquidValue() {
-	    	assertEquals(1000, user.a.getTotalLiquidValue(user));
-	    	assertEquals(-500, user.l.getTotalLiquidValue(user));
+	    	assertEquals(1000, user.assetList.getTotalLiquidValue(user));
+	    	assertEquals(-500, user.liabilityList.getTotalLiquidValue(user));
 	    }
 	    @Test
 	    public void testGetTotalNumberofAssets() {
-	        assertEquals(1, user.a.getTotalNumberofAssets());
-	        assertEquals(1, user.l.getTotalNumberofLiabilities());
+	        assertEquals(1, user.assetList.getTotalNumberofAssets());
+	        assertEquals(1, user.liabilityList.getTotalNumberofLiabilities());
 	    }
 
 }
