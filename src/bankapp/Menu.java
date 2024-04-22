@@ -143,7 +143,7 @@ public class Menu {
 	public void displayingOptions() {
 		List<String> options = Arrays.asList("Choose from the following options: ", "1. Deposit", "2. Withdraw",
 				"3. Transfer", "4. Check Balance", "5. Show Account Information", "6. Switch Account",
-				"7. Create Account", "8. Delete Account", "9. Loans", "10. Exit");
+				"7. Create Account", "8. View Assets & Liabilities", "9. Delete Account", "10. Exit");
 		for (String option : options) {
 			System.out.println(option);
 		}
@@ -173,7 +173,10 @@ public class Menu {
 			case 7:
 				menuCreateAccount();
 				break;
-			case 8:
+			case 8: 
+				assetsAndLiabilities(); 
+				break;
+			case 9:
 				menuDeleteAccount();
 				break;
 			case 9:
@@ -346,6 +349,252 @@ public class Menu {
 		accounts.remove(deleteID);
 	}
 	
+	public void assetsAndLiabilities() {
+		boolean validAnswer = false; 
+		while(validAnswer == false) {
+		System.out.println("Choose from the following options: ");
+		System.out.println("1. Access Assets");
+		System.out.println("2. Acess Liabilities");
+		System.out.println("3. Exit");
+		int option = caretaker.getInt(); 
+		if(option == 1) {
+			validAnswer = true;
+			menuAssets(); 
+		}
+		else if (option == 2) {
+			validAnswer = true;
+			menuLiabilities(); 
+		}
+		else if (option == 3) {
+			validAnswer = true; 
+		}
+		else {
+			System.out.println("Invalid option. Please type 1, 2, or 3");
+		}
+	}
+}
+	
+	public void menuAssets() {
+		System.out.println("You are now viewing assets.");
+		//will fix below line, discussing implementing the lists into bank account class
+		System.out.println("Your total assets' liquid value is " + currentUser.getTotalLiquidValue());
+		boolean exit = false; 
+		while (exit != true) {
+			System.out.println("What would you like to do next?");
+			System.out.println("1. Get a list of current assets and values");
+			System.out.println("2. View Retirement Fund");
+			System.out.println("3. Exit");
+			int option = caretaker.getInt(); 
+			if(option == 1) {
+				for(PersonalCapital pc : currentUser.assetList.assets) {
+					int id = pc.getID();//fix ID method 
+					Double val = pc.getLiquidValue(pc); 
+					System.out.println(id + " value: " + val); 
+				}
+			}
+			else if(option == 2) {
+				System.out.println("What would you like to do with your retirement fund?");
+				System.out.println("1. Deposit money");
+				System.out.println("2. See balance");
+				System.out.println("3. Open retirement fund");
+				int opt = caretaker.getInt(); 
+				if(opt == 1) {
+					System.out.println("How much would you like to deposit?");
+					double deposit = caretaker.getDouble(); 
+					System.out.println("Which account would you like to pay from? Enter ID number: ");
+					int idnumber = caretaker.getInt(); 
+					//pseudocode: BankAccount acct = getAccount (idnumber)
+					findFund().addYearlyPayment(acct, deposit); 
+					}
+				else if(opt == 2) {
+					System.out.println("Total value of retirement fund is : " + findFund().getLiquidValue(findFund())); 
+				}
+				else if(opt == 3) {
+					System.out.println("Which account would you like to pay from today?");
+					//id needs to be fixed
+					System.out.println("How much would you like to intialize?");
+					double start = caretaker.getDouble();
+					System.out.println("What is your average annual income?");
+					double income = caretaker.getDouble(); 
+					System.out.println("What is the annual rate you would like to contribute?");
+					double rate = caretaker.getDouble(); 
+					RetirementFund retirementfund = new RetirementFund(rate, income);
+					currentUser.assetList.assets.add(retirementfund);
+				}
+				
+			} 
+			else if(option == 3) {
+				exit = true; 
+				}
+			
+			else {
+				System.out.println("Please select 1, 2, or 3");
+			}
+		}
+	}
+
+public RetirementFund findFund() {
+	for(int i = 0; i < currentUser.assetList.assets.size(); i++) {
+		if(currentUser.assetList.assets.get(i) instanceof RetirementFund) {
+			return (RetirementFund)currentUser.assetList.assets.get(i);
+		}
+	}
+	return null; 
+}
+
+		public void menuLiabilities() {
+			System.out.println("You are now viewing liabilities.");
+			//will fix below line, discussing implementing the lists into bank account class
+			System.out.println("Your total liabilities' liquid value is " + currentUser.getTotalLiquidValue(liabilities));
+			boolean exit = false; 
+			while (exit != true) {
+				System.out.println("What would you like to do next?");
+				System.out.println("1. Get a list of current liabilities and values");
+				System.out.println("2. Remove a liability");
+				System.out.println("3. Add a liability");
+				System.out.println("4. Access loans");
+				System.out.println("5. Access mortgage");
+				System.out.println("6. Exit");
+				int option = caretaker.getInt(); 
+				if(option == 1) {
+					for(PersonalCapital pc : currentUser.getLiabilities()) {
+						int id2 = pc.getID();//fix ID method 
+						Double val = pc.getLiquidValue(pc); 
+						System.out.println(id2 + " value: " + val); 
+					}
+				}
+				else if(option == 2) {
+					System.out.println("Which liabilitiy would you like to remove? Enter ID number");
+					int idnum = caretaker.getInt(); 
+					boolean success = false; 
+					for(PersonalCapital x : currentUser.liabilityList.liabilities) {
+						if(x.getID() == idnum) { //fix ID method 
+							 success = currentUser.liabilityList.liabilities.remove(x); 
+						}
+					}
+					if(success == true) {
+						System.out.println("Item removed");
+					}
+					else {
+						System.out.println("Item not removed"); 
+					}
+				} 
+				else if(option == 3) {
+					System.out.println("Which type of liability would you like to add?");
+					System.out.println("1. Mortgage");
+					System.out.println("2. Loan");
+					int op = caretaker.getInt(); 
+					if(op == 1) {
+						System.out.println("What is the name of your Mortgage?");
+						String name = caretaker.getString(); 
+						System.out.println("What is the total amount you need to pay?");
+						double due = caretaker.getDouble(); 
+						System.out.println("What is the interest rate of your Mortgage?");
+						double rate = caretaker.getDouble(); 
+						System.out.println("How many years is your mortgage?");
+						int years = caretaker.getInt(); 
+						Mortgage newM = new Mortgage(name, due, rate, years);
+						currentUser.liabilityList.liabilities.add(newM);
+					}
+					else if(op == 2) {
+						//need to add with loan attributes 
+					}
+				}
+				else if(option == 4) {
+					//need to discuss with how loans are supposed to be implemented 
+				}
+				else if(option == 5) {
+					System.out.println("You are accessing mortgages.");
+					int count = 0; 
+					for(int i = 0; i < currentUser.liabilityList.liabilities.size(); i++) {
+						Object Mortgage;
+						if((currentUser.liabilityList.liabilities.get(i)).equals(Mortgage)) {
+							count++; 
+							System.out.println(count + "." + currentUser.liabilityList.liabilities.get(i).toString());
+							
+						}
+					}
+					boolean exit2 = false; 
+					System.out.println("Total Mortgages: " + count);
+					while(exit2 == false) {
+					System.out.println("What would you like to do?");
+					System.out.println("1. Pay Mortgage");
+					System.out.println("2. See Mortgage Payment Due this Month");
+					System.out.println("3. Exit");
+					int select = caretaker.getInt(); 
+					if(select == 1) {
+						System.out.println("What mortgage would you like to pay? Select number from list abbove");
+						int wow = caretaker.getInt();
+						Mortgage paying = (Mortgage)currentUser.liabilityList.liabilities.get(wow);
+						double total = paying.getInterestPayment() + paying.getMortgagePayment(); 
+						System.out.println("Your mortgage due this month is: " + total + ". How much are you paying today?");
+						double money = caretaker.getDouble(); 
+						if(money < total) {
+							System.out.println("You are paying less than tht total due for this month. If the rest of the payment is turned in after the due date, a late fee will be added to your account. Proceed?");
+							System.out.println("Type 'yes' to continue");
+							String choice = caretaker.getString(); 
+							if(choice.equals("yes")) {	
+							}
+							else {
+								exit = true; 
+							}
+						}
+						if(exit == true) {
+						} else {
+						boolean answer = false; 
+						boolean time = false; 
+						while (answer == false) {
+						System.out.println("Did client turn in payment before or after deadline? Type True for before, False for after");
+						String ans = caretaker.getString(); 
+						if(ans.equals("True")) {
+							answer = true; 
+							time = true; 
+						}
+						else if (ans.equals("False")) {
+							answer = true; 
+							time = false; 
+						}
+						else {
+							System.out.println("Inavlid Answer.");
+						}
+					}
+						System.out.println("Enter the account number  that the user is paying with");
+						Integer id = caretaker.getInt(); 
+						BankAccount pay = currentUser.getBankAccounts().get(id);
+						double before = pay.getBalance(); 
+						paying.payMortgage(money, pay, time, currentUser); 
+						if(before - money == pay.getBalance()) {
+							System.out.println("Successfully paid. Total overall amount remaining: " + paying.getAmount());
+						}
+						else {
+							System.out.println("Unsucessful payment. Please check account balance, mortgage, and payment amount.");
+						}
+						}
+				}
+					else if(option == 2) {
+						System.out.println("What mortgage would you like to see? Select number from list abbove");
+						int wow = caretaker.getInt();
+						Mortgage view = (Mortgage)currentUser.liabilityList.liabilities.get(wow);
+						double total = view.getInterestPayment() + view.getMortgagePayment(); 
+						System.out.println("Payment of " + total + " due to this month");
+					}
+					else if (option == 3){
+						exit = true;
+					}
+					else {
+						System.out.println("Please selection option 1-3.");
+					}
+				}
+			}
+				else if(option == 6) {
+					exit = true; 
+				}
+				else {
+					System.out.println("Invalid option. Please selection an option 1-6.");
+				}
+				
+			}
+	}
 
 // payment cal
 public static double calculateLoanPayment(double principal, double annualInterestRate, double years) {

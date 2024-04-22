@@ -10,13 +10,25 @@ public class User implements Serializable {
 	private LinkedList<BankAccount> userAccounts;
 	private String password;
 	private String username;
+	private Liabilities liabilityList; 
+	private Assets assetList; 
 
 	public User(String username, String password) {
 		this.userAccounts = new LinkedList<BankAccount>();
 		this.username = Objects.requireNonNull(username, "Username must be non-null");
 		this.password = Objects.requireNonNull(password, "Password must be non-null");
+		this.liabilityList = new Liabilities();
+		this.assetList = new Assets();
 	}
-
+	
+	public LinkedList<PersonalCapital> getLiabilities() {
+		return this.liabilityList.getLiabilityList();
+	}
+	
+	public LinkedList<PersonalCapital> getAssets() {
+		return this.assetList.getAssetList();
+	}
+	
 	public String getUsername() {
 		return username;
 	}
