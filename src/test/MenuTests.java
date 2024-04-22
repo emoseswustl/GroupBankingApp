@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -22,13 +23,16 @@ public class MenuTests {
     private PrintStream startingOut;
     private InputStream startingIn;
 
-	@BeforeEach
-    public void setUp() {
+	//@BeforeEach
+    public void setUp(String input) {
         outputStream = new ByteArrayOutputStream();
         startingOut = System.out;
         System.setOut(new PrintStream(outputStream));
         startingIn = System.in;
-        menu = new Menu(new Scanner(System.in));
+        
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        Scanner scan = new Scanner(inputStream);
+        menu = new Menu(scan);
     }
 
     @AfterEach
@@ -39,6 +43,7 @@ public class MenuTests {
 
     @Test
     public void testCreateUser() {
+    	setUp("");
         User user = new User("Bob", "password");
         menu.createUser("Bob", user);
         assertEquals(user, menu.getUser("Bob"));
@@ -46,6 +51,7 @@ public class MenuTests {
 
     @Test
     public void testGetUser() {
+    	setUp("");
         User user = new User("Bob", "password");
         menu.createUser("Bob", user);
         assertEquals(user, menu.getUser("Bob"));
@@ -53,9 +59,11 @@ public class MenuTests {
 
     @Test
     public void testProcessingUserDeposit() {
+    	setUp("");
         User user = new User("Bob", "password");
         BankAccount account = new BankAccount(true, user, 100.0);
         menu.setUser(user);
+        menu.setCurrentAccount(account);
         user.addBankAccount(account);
         menu.processingUserDeposit(50.0);
         assertEquals(150.0, account.getBalance());
@@ -63,36 +71,36 @@ public class MenuTests {
 
     @Test
     public void testProcessingUserWithdraw() {
+    	setUp("");
         User user = new User("Bob", "password");
         BankAccount account = new BankAccount(true, user, 100.0);
         menu.setUser(user);
         user.addBankAccount(account);
+        menu.setCurrentAccount(account);
         menu.processingUserWithdraw(50.0);
         assertEquals(50.0, account.getBalance());
     }
 
     @Test
     public void testMenuDeposit() {
+    	setUp("50.0");
         User user = new User("Bob", "password");
         BankAccount account = new BankAccount(true, user, 100.0);
-        menu.setUser(user);
         user.addBankAccount(account);
-        String input = "50.0\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
+        menu.setUser(user);
+        menu.setCurrentAccount(account);
         menu.menuDeposit();
-        assertEquals(150.0, account.getBalance());
+        assertEquals(150.0, menu.getAccount().getBalance());
     }
 
     @Test
     public void testMenuWithdraw() {
+    	setUp("50.0");
         User user = new User("Bob", "password");
         BankAccount account = new BankAccount(true, user, 100.0);
         menu.setUser(user);
         user.addBankAccount(account);
-        String input = "50.0\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
+        menu.setCurrentAccount(account);
         menu.menuWithdraw();
         assertEquals(50.0, account.getBalance());
     }
@@ -104,10 +112,9 @@ public class MenuTests {
         BankAccount account2 = new BankAccount(true, user, 50.0);
         user.addBankAccount(account1);
         user.addBankAccount(account2);
+        setUp(account1.getID() + "\n" + account2.getID() + "\n" + "25.0\n");
+        menu.setCurrentAccount(account1);
         menu.setUser(user);
-        String input = account1.getID() + "\n" + account2.getID() + "\n" + "25.0\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
         menu.menuTransfer();
         assertEquals(75.0, account1.getBalance());
         assertEquals(75.0, account2.getBalance());
@@ -115,10 +122,12 @@ public class MenuTests {
 
     @Test
     public void testMenuCheckBalance() {
+    	setUp("");
         User user = new User("Bob", "password");
         BankAccount account = new BankAccount(true, user, 100.0);
         menu.setUser(user);
         user.addBankAccount(account);
+        menu.setCurrentAccount(account);
         menu.menuCheckBalance();
         String output = outputStream.toString().trim();
         assertTrue(output.contains("Your balance is: 100.0"));
@@ -126,6 +135,7 @@ public class MenuTests {
 
     @Test
     public void testMenuAccountInformation() {
+    	setUp("");
         User user = new User("Bob", "password");
         BankAccount account1 = new BankAccount(true, user, 100.0);
         BankAccount account2 = new BankAccount(false, user, 200.0);
@@ -149,22 +159,19 @@ public class MenuTests {
         BankAccount account2 = new BankAccount(false, user, 200.0);
         user.addBankAccount(account1);
         user.addBankAccount(account2);
+        setUp(account2.getID() + "\n");
+        menu.setCurrentAccount(account2);
         menu.setUser(user);
         menu.createUser("Bob", user);
-        String input = account2.getID() + "\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
         menu.menuSwitchAccounts();
         assertEquals(account2, menu.getAccount());
     }
 
     @Test
     public void testMenuCreateAccount() {
+    	setUp("1\n");
         User user = new User("Bob", "password");
         menu.setUser(user);
-        String input = "1\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
         menu.menuCreateAccount();
         assertEquals(1, user.getBankAccounts().size());
         assertTrue(user.getBankAccounts().getFirst().isChecking());
@@ -177,11 +184,9 @@ public class MenuTests {
         BankAccount account2 = new BankAccount(false, user, 200.0);
         user.addBankAccount(account1);
         user.addBankAccount(account2);
+        setUp(account1.getID() + "\n");
         menu.setUser(user);
         menu.createUser("Bob", user);
-        String input = account1.getID() + "\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
         menu.menuDeleteAccount();
         assertEquals(2, user.getBankAccounts().size());
         assertEquals(account2, user.getBankAccounts().getFirst());

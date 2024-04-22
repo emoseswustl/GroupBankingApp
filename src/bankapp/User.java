@@ -50,11 +50,8 @@ public class User implements Serializable {
 	}
 
 	public boolean addBankAccount(BankAccount bankaccount) {
-		//if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
-			userAccounts.add(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
-			return true;
-		//}
-		//return false;
+		userAccounts.add(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
+		return true;
 	}
 	
 	public LinkedList<BankAccount> getBankAccounts() {
@@ -62,10 +59,7 @@ public class User implements Serializable {
 	}
 
 	public boolean removeBankAccount(BankAccount bankaccount) {
-		//if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
-			return userAccounts.remove(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
-		//}
-		//return false;
+		return userAccounts.remove(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 	}
 
 	public int numberOfAccounts(String password) {
@@ -84,5 +78,10 @@ public class User implements Serializable {
 		}
 		return liquidatedAssets;
 	}
+
+    public int LoanSetUp() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'LoanSetUp'");
+    }
 
 }

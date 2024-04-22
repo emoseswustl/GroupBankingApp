@@ -47,55 +47,42 @@ class UserTests {
 
     @Test
     void testAddBankAccountSuccess() {
-        assertTrue(user.addBankAccount(firstAccount, CORRECT_PASSWORD));
+        assertTrue(user.addBankAccount(firstAccount));
         assertEquals(1, user.numberOfAccounts(CORRECT_PASSWORD));
-    }
-
-    @Test
-    void testAddBankAccountFailure() {
-        assertFalse(user.addBankAccount(firstAccount, INCORRECT_PASSWORD));
-        assertEquals(0, user.numberOfAccounts(CORRECT_PASSWORD));
     }
 
     @Test
     void testRemoveBankAccountSuccess() {
-        user.addBankAccount(firstAccount, CORRECT_PASSWORD);
-        assertTrue(user.removeBankAccount(firstAccount, CORRECT_PASSWORD));
+        user.addBankAccount(firstAccount);
+        assertTrue(user.removeBankAccount(firstAccount));
         assertEquals(0, user.numberOfAccounts(CORRECT_PASSWORD));
     }
 
     @Test
-    void testRemoveBankAccountFailure() {
-        user.addBankAccount(firstAccount, CORRECT_PASSWORD);
-        assertFalse(user.removeBankAccount(firstAccount, INCORRECT_PASSWORD));
-        assertEquals(1, user.numberOfAccounts(CORRECT_PASSWORD));
-    }
-
-    @Test
     void testNumberOfAccountsSuccess() {
-        user.addBankAccount(firstAccount, CORRECT_PASSWORD);
-        user.addBankAccount(secondAccount, CORRECT_PASSWORD);
+        user.addBankAccount(firstAccount);
+        user.addBankAccount(secondAccount);
         assertEquals(2, user.numberOfAccounts(CORRECT_PASSWORD));
     }
 
     @Test
     void testNumberOfAccountsFailure() {
-        user.addBankAccount(firstAccount, CORRECT_PASSWORD);
-        user.addBankAccount(secondAccount, CORRECT_PASSWORD);
+        user.addBankAccount(firstAccount);
+        user.addBankAccount(secondAccount);
         assertEquals(0, user.numberOfAccounts(INCORRECT_PASSWORD));
     }
 
     @Test
     void testGetLiquidatedAssetsSuccess() {
-        user.addBankAccount(firstAccount, CORRECT_PASSWORD);
-        user.addBankAccount(secondAccount, CORRECT_PASSWORD);
+        user.addBankAccount(firstAccount);
+        user.addBankAccount(secondAccount);
         assertEquals(300.0, user.getLiquidatedAssets(CORRECT_PASSWORD));
     }
 
     @Test
     void testGetLiquidatedAssetsFailure() {
-        user.addBankAccount(firstAccount, CORRECT_PASSWORD);
-        user.addBankAccount(secondAccount, CORRECT_PASSWORD);
+        user.addBankAccount(firstAccount);
+        user.addBankAccount(secondAccount);
         assertEquals(0.0, user.getLiquidatedAssets(INCORRECT_PASSWORD));
     }
 }

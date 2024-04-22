@@ -53,7 +53,7 @@ public class BankAccount extends Assets implements Serializable {
 	}
 
 	private void validateSufficientBalance(double amount) {
-		if (amount >= this.balance) {
+		if (amount > this.balance) {
 			throw new IllegalArgumentException("Amount must be less than or equal to balance");
 		}
 	}
@@ -91,9 +91,11 @@ public class BankAccount extends Assets implements Serializable {
 		return this.balance;
 	}
 
+	/*
 	public int getID() {
 		return this.ID;
 	}
+	*/
 
 	public boolean isChecking() {
 		return this.isChecking;
@@ -102,4 +104,9 @@ public class BankAccount extends Assets implements Serializable {
 	public User getOwner() {
 		return this.owner;
 	}
+
+    public int LoanSetUp() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'LoanSetUp'");
+    }
 }

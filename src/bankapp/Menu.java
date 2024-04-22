@@ -23,6 +23,8 @@ public class Menu {
 	
 	public Menu(Scanner scanner) {
         this(new ScannerCaretaker(scanner));
+        this.accounts = new HashMap<Integer, BankAccount>();
+        this.users = new HashMap<String, User>();
     }
 	// Constructor
 	public Menu(InputCaretaker caretaker) {
@@ -103,6 +105,15 @@ public class Menu {
 		}
 	}
 	
+	private void getLoadMaps() {
+		bankAccts = new FileStorage("accounts");
+		userAccts = new FileStorage("users");
+		if (bankAccts.readBankAcctMap() != null && userAccts.readUserMap() != null) {
+			accounts = bankAccts.readBankAcctMap();
+			users = userAccts.readUserMap();
+		}
+	}
+	
 	private void createNewAccounts() {
 		displayFirstIterationName();
 		String name = getString();
@@ -168,6 +179,8 @@ public class Menu {
 			case 9:
 				menuDeleteAccount();
 				break;
+			case 9:
+			   menuLoans();
 		}
 	}
 
@@ -175,7 +188,6 @@ public class Menu {
 		System.out.println("How much money do you want to deposit?");
 		double amount = getValidUserDeposit();
 		processingUserDeposit(amount);
-
 	}
 
 	public void menuWithdraw() {
@@ -305,12 +317,10 @@ public class Menu {
 		System.out.println("Creating account...");
 		if (accountType == 1) {
 			BankAccount checking = new BankAccount(true, currentUser, 0.0);
-			currentUser.addBankAccount(checking);
-			accounts.put(checking.getID(), checking);
+			addAccount(checking);
 		} else {
 			BankAccount savings = new BankAccount(false, currentUser, 0.0);
-			currentUser.addBankAccount(savings);
-			accounts.put(savings.getID(), savings);
+			addAccount(savings);
 		}
 	}
 
@@ -586,9 +596,53 @@ public RetirementFund findFund() {
 			}
 	}
 
+// payment cal
+public static double calculateLoanPayment(double principal, double annualInterestRate, double years) {
+	// Convert annual interest rate to monthly rate
+	double monthlyInterestRate = annualInterestRate / 100 / 12;
+
+	// Calculate the number of monthly payments
+	int numPayments = (int) (years * 12);
+
+	// Calculate the monthly payment using the formula for monthly loan payment
+	double monthlyPayment = (principal * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numPayments));
+
+	return monthlyPayment;
+}
+ // Loan set up method 
+ public double setupLoan() {
+	Scanner scanner = new Scanner(System.in);
+
+	// User input for loan details
+	System.out.print("Enter the loan amount: $");
+	double loanAmount = scanner.nextDouble();
+
+	System.out.print("Enter the annual interest rate (as a percentage): ");
+	double annualInterestRate = scanner.nextDouble();
+
+	System.out.print("Enter the loan term in years: ");
+	double loanTermYears = scanner.nextDouble();
+
+	// Calculate the monthly loan payment
+	double monthlyPayment = calculateLoanPayment(loanAmount, annualInterestRate, loanTermYears);
+
+	// Display the monthly payment to the user
+	System.out.printf("Your monthly loan payment is: $%.2f%n", monthlyPayment);
+
+	
+	return monthlyPayment;
+}
+
+public double menuLoans(){
+	return setupLoan(); 
+}
+
 	public int getOption() {
 		return caretaker.getInt();
 	}
+
+	
+
 
 	public void displayFirstIterationName() {
 		System.out.println("Welcome to the bank!");
@@ -639,6 +693,15 @@ public RetirementFund findFund() {
 	public void processingUserDeposit(double amount) {
 		currentAccount.deposit(amount);
 		System.out.println("Your balance is now: " + currentAccount.getBalance());
+	}
+	
+	public void addAccount(BankAccount account) {
+		currentUser.addBankAccount(account);
+		accounts.put(account.getID(), account);
+	}
+	
+	public void setCurrentAccount(BankAccount account) {
+		this.currentAccount = account;
 	}
 
 	public BankAccount getAccount() {
