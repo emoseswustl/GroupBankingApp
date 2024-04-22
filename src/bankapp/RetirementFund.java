@@ -7,12 +7,11 @@ public class RetirementFund extends PersonalCapital {
 	private double paidYearly;  
 
 	
-	public RetirementFund(double annualContributation, double income) {
-		super(true, 0);
+	public RetirementFund(double annualContributation, double income, User currentUser) {
+		super(true, 0, currentUser);
 		this.annualContributation = annualContributation;
 		this.income = income; 
 		this.paidYearly = 0;
-		
 	}
 	
 	public void addYearlyPayment(BankAccount acct, double payment) {
@@ -20,7 +19,6 @@ public class RetirementFund extends PersonalCapital {
 		acct.withdraw(payment);
 		super.liquidValue += payment;
 		this.paidYearly += payment; 
-		
 	}
 	
 	public double calculateYearlyPaymentOwed(){

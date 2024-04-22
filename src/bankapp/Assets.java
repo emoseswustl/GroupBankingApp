@@ -2,29 +2,26 @@ package bankapp;
 
 import java.util.LinkedList;
 
-public class Assets extends PersonalCapital {
-	
-	public LinkedList<PersonalCapital>assets = new LinkedList<>(); 
-	
-	public Assets() {
-		super(true, 0);
-		this.assets = new LinkedList<PersonalCapital>(); 
+public class Assets extends BalanceSheet {
+		
+	public Assets(User currentUser) {
+		super(currentUser, true);
 	}
 	
 	public LinkedList<PersonalCapital> getAssetList(){
-		return this.assets;	
+		return getAccounts();	
 	}
 	
-	
 	public PersonalCapital get(int i) {
-		return assets.get(i); 
+		return getAccounts().get(i); 
 	}
 	
 	public double getTotalLiquidValue(User currentUser) {
-		return super.getTotalLiquidValue(currentUser, true); 
+		return super.getTotalLiquidValue(); 
 	}
+	
 	public int getTotalNumberofAssets() {
-		return this.assets.size(); 
+		return getAccounts().size(); 
 	}
 }
 
