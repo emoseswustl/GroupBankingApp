@@ -1,8 +1,9 @@
 package test;
 import static org.junit.jupiter.api.Assertions.*;
 
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import bankapp.BankAccount;
 import bankapp.Liabilities;
@@ -13,8 +14,8 @@ import bankapp.User;
 
 public class RetirementFundTest {
 	User x = new User(" ", " ");
-	private RetirementFund test = new RetirementFund(0.05, 45000);
-	private BankAccount tester = new BankAccount(false, x, 100000);
+	private RetirementFund test = new RetirementFund(0.05, 45000, x, 123);
+	private BankAccount tester = new BankAccount(false, x, 100000.0, 234);
 	
 
 @Test

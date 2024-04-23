@@ -7,7 +7,7 @@ public class RetirementFund extends PersonalCapital {
 	private double paidYearly;  
 
 	
-	public RetirementFund(double annualContributation, double income, User currentUser) {
+	public RetirementFund(double annualContributation, double income, User currentUser, int ID) {
 		super(true, 0, currentUser, ID);
 		this.annualContributation = annualContributation;
 		this.income = income; 
@@ -34,7 +34,7 @@ public class RetirementFund extends PersonalCapital {
 	}
 	
 	public void incrementYear() {
-		this.paidYearly = 0; 
+		this.paidYearly++; 
 	}
 	
 }

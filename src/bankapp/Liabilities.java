@@ -1,8 +1,10 @@
 package bankapp;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class Liabilities extends BalanceSheet {
+public class Liabilities extends BalanceSheet implements Serializable {
+	private static final long serialVersionUID = 1442940342133405813L;
 
 	public Liabilities(User currentUser) {
 		super(currentUser, false);
@@ -18,10 +20,6 @@ public class Liabilities extends BalanceSheet {
 
 	public double getTotalLiquidValue(User currentUser) {
 		return super.getTotalLiquidValue();
-	}
-
-	public double getLiquidValue(PersonalCapital l) {
-		return l.getLiquidValue();
 	}
 
 	public int getTotalNumberofLiabilities() {

@@ -1,11 +1,13 @@
 package bankapp;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class BalanceSheet {
+public class BalanceSheet implements Serializable {
 	private boolean hasAssets;
 	private User owner;
 	private LinkedList<PersonalCapital> accounts;
+	private static final long serialVersionUID = 1234122034233405813L;
 	
 	public BalanceSheet (User owner, boolean hasAssets) {
 		this.owner = owner;
@@ -15,6 +17,17 @@ public class BalanceSheet {
 	
 	public LinkedList<PersonalCapital> getAccounts() {
 		return accounts;
+	}
+	
+	public boolean addAccount(PersonalCapital acct) {
+		if (!accounts.contains(acct)) {
+			return accounts.add(acct);
+		}
+		return false;
+	}
+	
+	public boolean removeAccount(PersonalCapital acct) {
+		return accounts.remove(acct);
 	}
 
 	public double getTotalLiquidValue() {
