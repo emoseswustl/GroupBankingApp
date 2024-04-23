@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class BankDatabase {
 	private Map<Integer, String> accounts;
@@ -67,6 +68,10 @@ public class BankDatabase {
 		users.put(newUser.getUsername(), newUser);
 	}
 	
+	public int numberAccounts() {
+		return accounts.size();
+	}
+	
 	/**
 	 * Removes a PersonalCapital account from the map.
 	 * @param account Account object that should be removed.
@@ -105,6 +110,10 @@ public class BankDatabase {
 		return null;
 	}
 	
+	public Set<Entry<Integer, String>> getAllBankAccounts(int ID) {
+		return accounts.entrySet();
+	}
+	
 	/**
 	 * Gets the user linked to a specific username.
 	 * @param username String representing the username requested.
@@ -133,6 +142,23 @@ public class BankDatabase {
 		for (Entry<Integer, String> current: accountList) {
 			if (!current.getValue().equals(username)) {
 				accountNumbers.add(current.getKey());
+			}
+		}
+		return accountNumbers;
+	}
+	
+	/**
+	 * Returns all accounts not owned by the user.
+	 * @param username String representing the username.
+	 * @return A set storing all account numbers that are not owned by the user.
+	 */
+	public Set<Integer> allAccounts(int currentAccount) {
+		Collection<Entry<Integer, String>> accountList = this.accounts.entrySet();
+		Set<Integer> accountNumbers = new HashSet<Integer>();
+		for (Entry<Integer, String> current: accountList) {
+			if (current.getKey() != currentAccount) {
+				accountNumbers.add(current.getKey());
+
 			}
 		}
 		return accountNumbers;

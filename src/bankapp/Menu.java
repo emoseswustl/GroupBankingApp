@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class Menu {
@@ -102,6 +103,7 @@ public class Menu {
 		setUser(user);
 		currentAccount = new BankAccount(true, user, 10000, database.createUniqueID());
 		user.addAsset(currentAccount);
+		database.addAccount(currentAccount);
 	}
 
 	public void setUser(User user) {
@@ -164,11 +166,15 @@ public class Menu {
 	}
 
 	public void menuTransfer() {
-		if (currentUser.getBankAccounts().size() < 2) {
-			System.out.println("You need at least two accounts to transfer money.");
+		if (database.numberAccounts() < 2 && currentUser.getBankAccounts().size() >= 1) {
+			System.out.println(database.numberAccounts() + " " + currentUser.getBankAccounts().size());
+			System.out.println("You need at least one account to transfer money, or you need one other account from a different user to transfer to.");
+			return;
+		} else if (database.numberAccounts() < 2 && currentUser.getBankAccounts().size() < 2) {
+			System.out.println("You need at least one account to transfer money.");
 			return;
 		}
-
+		
 		System.out.println("Choose from the following account IDs to transfer from: ");
 		for (PersonalCapital account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
@@ -207,25 +213,23 @@ public class Menu {
 
 		int recipientID = getOption();
 		PersonalCapital recipientAccount = null;
-		for (PersonalCapital account : currentUser.getBankAccounts()) {
-			if (account.getID() == recipientID && account != senderAccount) {
-				recipientAccount = account;
-				break;
-			}
+		recipientAccount = database.getAccount(recipientID);
+		if (recipientAccount == senderAccount) {
+			recipientAccount = null;
 		}
 
 		while (recipientAccount == null) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to transfer to: ");
-			for (PersonalCapital account : currentUser.getBankAccounts()) {
-				if (account != senderAccount) {
-					System.out.println("Account ID: " + account.getID());
+			for (Entry<Integer, String> account : database.getAllBankAccounts(senderID)) {
+				if (account.getKey() != senderAccount.getID()) {
+					System.out.println("Account ID: " + account.getKey());
 				}
 			}
 			recipientID = getOption();
-			for (PersonalCapital account : currentUser.getBankAccounts()) {
-				if (account.getID() == recipientID && account != senderAccount) {
-					recipientAccount = account;
+			for (Entry<Integer, String> account : database.getAllBankAccounts(senderID)) {
+				if (account.getKey() == recipientID && account.getKey() != senderAccount.getID()) {
+					recipientAccount = database.getAccount(recipientID);
 					break;
 				}
 			}
