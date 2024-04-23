@@ -3,6 +3,7 @@ package bankapp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -49,8 +50,28 @@ public class BankDatabase {
 		account.getOwner().addAsset(account);
 	}
 	
+	/**
+	 * Add a user to the map within the bank database.
+	 * @param newUser User that should be added to the map.
+	 */
 	public void addUser(User newUser) {
 		users.put(newUser.getUsername(), newUser);
+	}
+	
+	/**
+	 * Removes a PersonalCapital account from the map.
+	 * @param account Account object that should be removed.
+	 */
+	public void removeAccount(PersonalCapital account) {
+		accounts.remove(account.getID());
+	}
+	
+	/**
+	 * Removes a User object from the corresponding map.
+	 * @param toRemove User object that should be removed.
+	 */
+	public void removeUser(User toRemove) {
+		users.remove(toRemove.getUsername());
 	}
 	
 	/**
@@ -98,12 +119,11 @@ public class BankDatabase {
 	 * @return A set storing all account numbers that are not owned by the user.
 	 */
 	public Set<Integer> accountsNotOwned(String username) {
-		Collection<Integer> accountList = this.accounts.keySet();
+		Collection<Entry<Integer, String>> accountList = this.accounts.entrySet();
 		Set<Integer> accountNumbers = new HashSet<Integer>();
-		for (Integer current: accountList) {
-			PersonalAsset acccount = 
-			if (!current.equals(username)) {
-				accountNumbers.add(current.getID());
+		for (Entry<Integer, String> current: accountList) {
+			if (!current.getValue().equals(username)) {
+				accountNumbers.add(current.getKey());
 			}
 		}
 		return accountNumbers;
@@ -128,9 +148,9 @@ public class BankDatabase {
 	 * @return The account number as a six-digit integer.
 	 */
 	public int createUniqueID() {
-		String owner = null;
+		String owner = "default";
 		int newNumber = 0;
-		while (owner == null) {
+		while (owner != null) {
 			newNumber = (int) Math.random()*1000000;
 			owner = accounts.get(newNumber);
 		}

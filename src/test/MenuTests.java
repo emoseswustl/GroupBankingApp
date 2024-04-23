@@ -23,7 +23,6 @@ public class MenuTests {
 	private PrintStream startingOut;
 	private InputStream startingIn;
 
-	// @BeforeEach
 	public void setUp(String input) {
 		outputStream = new ByteArrayOutputStream();
 		startingOut = System.out;
@@ -45,16 +44,16 @@ public class MenuTests {
 	public void testCreateUser() {
 		setUp("");
 		User user = new User("Bob", "password");
-		menu.createUser("Bob", user);
-		assertEquals(user, menu.getUser("Bob"));
+		menu.getDatabase().addUser(user);
+		assertEquals(user, menu.getDatabase().getUser("Bob"));
 	}
 
 	@Test
 	public void testGetUser() {
 		setUp("");
 		User user = new User("Bob", "password");
-		menu.createUser("Bob", user);
-		assertEquals(user, menu.getUser("Bob"));
+		menu.getDatabase().addUser(user);
+		assertEquals(user, menu.getDatabase().getUser("Bob"));
 	}
 
 	@Test
@@ -182,8 +181,8 @@ public class MenuTests {
 		User user = new User("Bob", "password");
 		BankAccount account1 = new BankAccount(true, user, 100.0, 1);
 		BankAccount account2 = new BankAccount(false, user, 200.0, 2);
-		user.addBankAccount(account1);
-		user.addBankAccount(account2);
+		user.addAsset(account1);
+		user.addAsset(account2);
 		setUp(account1.getID() + "\n");
 		menu.setUser(user);
 		menu.createUser("Bob", user);

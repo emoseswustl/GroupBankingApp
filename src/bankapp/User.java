@@ -73,12 +73,12 @@ public class User implements Serializable {
 		return this.password.equals(Objects.requireNonNull(password, "Password must be non-null"));
 	}
 	
-	public LinkedList<PersonalCapital> getBankAccounts() {
-		LinkedList<PersonalCapital> userAccounts = new LinkedList<PersonalCapital>();
+	public LinkedList<BankAccount> getBankAccounts() {
+		LinkedList<BankAccount> userAccounts = new LinkedList<BankAccount>();
 		
 		for (PersonalCapital account: getAssetList()) {
 			if(account instanceof BankAccount) {
-				userAccounts.add(account);
+				userAccounts.add((BankAccount) account);
 			}
 		}
 		

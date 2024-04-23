@@ -68,25 +68,25 @@ public class Mortgage extends PersonalCapital {
 		return amountPaid;
 	}
 
-	public void payMortgage(double money, BankAccount account, boolean onTimeOrEarly, User currentUser) {
+	public void payMortgage(double money, PersonalCapital pay, boolean onTimeOrEarly, User currentUser) {
 		this.setMonthlyPayment();
 		double interest = getInterestPayment(); // this needs to go to the bank
 		double total = interest + this.mortgagePayment;
 		if (total >= this.amount) {
 			if (money >= total) {
 				double finalPayment = money - this.mortgagePayment;
-				account.withdraw(finalPayment);
+				pay.withdraw(finalPayment);
 				this.amount = 0;
 			}
 		}
 		if (money < total) {
 			if (!onTimeOrEarly) {
-				account.withdraw(money);
+				pay.withdraw(money);
 				this.amountPaid += money;
 				this.amount -= money;
 				this.mortgagePayment = (total - money) + setMonthlyPayment();
 			} else {
-				account.withdraw(money);
+				pay.withdraw(money);
 				this.amount -= money;
 				this.amountPaid += money;
 				this.updateMonthlyMortgage(money);
@@ -94,7 +94,7 @@ public class Mortgage extends PersonalCapital {
 		}
 
 		if (money >= total) {
-			account.withdraw(money);
+			pay.withdraw(money);
 			this.amount -= money;
 			this.amountPaid = 0;
 			this.updateMonthlyMortgage(total);

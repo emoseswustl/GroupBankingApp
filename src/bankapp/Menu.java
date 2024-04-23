@@ -170,13 +170,13 @@ public class Menu {
 		}
 
 		System.out.println("Choose from the following account IDs to transfer from: ");
-		for (BankAccount account : currentUser.getBankAccounts()) {
+		for (PersonalCapital account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
 		}
 
 		int senderID = getOption();
-		BankAccount senderAccount = null;
-		for (BankAccount account : currentUser.getBankAccounts()) {
+		PersonalCapital senderAccount = null;
+		for (PersonalCapital account : currentUser.getBankAccounts()) {
 			if (account.getID() == senderID) {
 				senderAccount = account;
 				break;
@@ -186,11 +186,11 @@ public class Menu {
 		while (senderAccount == null) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to transfer from: ");
-			for (BankAccount account : currentUser.getBankAccounts()) {
+			for (PersonalCapital account : currentUser.getBankAccounts()) {
 				System.out.println("Account ID: " + account.getID());
 			}
 			senderID = getOption();
-			for (BankAccount account : currentUser.getBankAccounts()) {
+			for (PersonalCapital account : currentUser.getBankAccounts()) {
 				if (account.getID() == senderID) {
 					senderAccount = account;
 					break;
@@ -199,15 +199,15 @@ public class Menu {
 		}
 
 		System.out.println("Choose from the following account IDs to transfer to: ");
-		for (BankAccount account : currentUser.getBankAccounts()) {
+		for (PersonalCapital account : currentUser.getBankAccounts()) {
 			if (account != senderAccount) {
 				System.out.println("Account ID: " + account.getID());
 			}
 		}
 
 		int recipientID = getOption();
-		BankAccount recipientAccount = null;
-		for (BankAccount account : currentUser.getBankAccounts()) {
+		PersonalCapital recipientAccount = null;
+		for (PersonalCapital account : currentUser.getBankAccounts()) {
 			if (account.getID() == recipientID && account != senderAccount) {
 				recipientAccount = account;
 				break;
@@ -217,13 +217,13 @@ public class Menu {
 		while (recipientAccount == null) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to transfer to: ");
-			for (BankAccount account : currentUser.getBankAccounts()) {
+			for (PersonalCapital account : currentUser.getBankAccounts()) {
 				if (account != senderAccount) {
 					System.out.println("Account ID: " + account.getID());
 				}
 			}
 			recipientID = getOption();
-			for (BankAccount account : currentUser.getBankAccounts()) {
+			for (PersonalCapital account : currentUser.getBankAccounts()) {
 				if (account.getID() == recipientID && account != senderAccount) {
 					recipientAccount = account;
 					break;
@@ -246,7 +246,7 @@ public class Menu {
 	}
 
 	public void menuAccountInformation() {
-		System.out.println("Account Information: ");
+		System.out.println("Bank Account Information: ");
 		for (BankAccount account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
 			System.out.println("Account Type: " + (account.isChecking() ? "Checking" : "Savings"));
@@ -261,7 +261,7 @@ public class Menu {
 		}
 		System.out.println("Choose the account ID to switch to: ");
 		accountIDs.clear();
-		for (BankAccount account : currentUser.getBankAccounts()) {
+		for (PersonalCapital account : currentUser.getBankAccounts()) {
 			System.out.println("Account ID: " + account.getID());
 			accountIDs.add(account.getID());
 		}
@@ -270,7 +270,7 @@ public class Menu {
 			System.out.println("Invalid account ID!");
 			switchID = getOption();
 		}
-		currentAccount = accounts.get(accountIDs.indexOf(switchID));
+		currentAccount = database.getAccount(switchID);
 	}
 
 	public void menuCreateAccount() {
@@ -284,10 +284,12 @@ public class Menu {
 		System.out.println("Creating account...");
 		if (accountType == 1) {
 			BankAccount checking = new BankAccount(true, currentUser, 0.0, database.createUniqueID());
-			addAccount(checking);
+			currentUser.addAsset(checking);
+			database.addAccount(checking);
 		} else {
 			BankAccount savings = new BankAccount(false, currentUser, 0.0, database.createUniqueID());
-			addAccount(savings);
+			currentUser.addAsset(savings);
+			database.addAccount(savings);
 		}
 	}
 
@@ -296,32 +298,25 @@ public class Menu {
 			System.out.println("You need at least one account to delete an account");
 			return;
 		}
-		System.out.println("Choose from the following account IDs to delete an account: ");
+		System.out.println("Choose from the following account IDs to delete an account (you cannot delete debts): ");
 		accountIDs.clear();
 		System.out.println("Assets:");
 		for (PersonalCapital account : currentUser.getLiabilityList()) {
 			System.out.println("Account ID: " + account.getID());
 			accountIDs.add(account.getID());
 		}
-		/*
-		System.out.println("\n Liabilities:");
-		for (PersonalCapital account : currentUser.getAssetList()) {
-			System.out.println("Account ID: " + account.getID());
-			accountIDs.add(account.getID());
-		}
-		*/
 		int deleteID = getOption();
 		while (!accountIDs.contains(deleteID)) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to delete an account: ");
-			for (BankAccount account : currentUser.getBankAccounts()) {
+			for (PersonalCapital account : currentUser.getBankAccounts()) {
 				System.out.println("Account ID: " + account.getID());
 			}
 			deleteID = getOption();
 		}
-		BankAccount toRemove = accounts.get(deleteID);
-		currentUser.removeBankAccount(toRemove);
-		accounts.remove(deleteID);
+		PersonalCapital toRemove = database.getAccount(deleteID);
+		currentUser.removeAsset(toRemove);
+		database.removeAccount(toRemove);
 	}
 
 	public void assetsAndLiabilities() {
@@ -462,8 +457,7 @@ public class Menu {
 				System.out.println("You are accessing mortgages.");
 				int count = 0;
 				for (int i = 0; i < currentUser.getLiabilityList().size(); i++) {
-					Object Mortgage;
-					if (currentUser.getLiabilityList().get(i).equals(Mortgage)) {
+					if (currentUser.getLiabilityList().get(i) instanceof Mortgage) {
 						count++;
 						System.out.println(count + "." + currentUser.getLiabilityList().get(i).toString());
 					}
@@ -514,7 +508,7 @@ public class Menu {
 							}
 							System.out.println("Enter the account number  that the user is paying with");
 							Integer id = caretaker.getInt();
-							BankAccount pay = currentUser.getBankAccounts().get(id);
+							PersonalCapital pay = database.getAccount(id);
 							double before = pay.getBalance();
 							paying.payMortgage(money, pay, time, currentUser);
 							if (before - money == pay.getBalance()) {
@@ -645,5 +639,9 @@ public class Menu {
 
 	public void setCurrentAccount(BankAccount account) {
 		this.currentAccount = account;
+	}
+	
+	public BankDatabase getDatabase() {
+		return database;
 	}
 }

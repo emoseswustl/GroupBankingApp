@@ -86,7 +86,7 @@ public class PersonalCapital implements Serializable {
 		}
 	}
 
-	public void transfer(double amount, BankAccount recipient) {
+	public void transfer(double amount, PersonalCapital recipient) {
 		validateTransfer(amount, recipient);
 		synchronized (this) {
 			this.withdraw(amount);
@@ -94,7 +94,7 @@ public class PersonalCapital implements Serializable {
 		}
 	}
 
-	private void validateTransfer(double amount, BankAccount recipient) {
+	private void validateTransfer(double amount, PersonalCapital recipient) {
 		if (recipient == null) {
 			throw new IllegalArgumentException("Recipient can't be null");
 		}
