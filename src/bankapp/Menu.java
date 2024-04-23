@@ -102,7 +102,6 @@ public class Menu {
 		database.addUser(user);
 		setUser(user);
 		currentAccount = new BankAccount(true, user, 10000, database.createUniqueID());
-		user.addAsset(currentAccount);
 		database.addAccount(currentAccount);
 	}
 
@@ -205,7 +204,7 @@ public class Menu {
 		}
 
 		System.out.println("Choose from the following account IDs to transfer to: ");
-		for (Entry<Integer, String> account : database.getAllBankAccounts(senderID)) {
+		for (Entry<Integer, String> account : database.getAllBankAccounts()) {
 			if (account.getKey() != senderAccount.getID()) {
 				System.out.println("Account ID: " + account.getKey());
 			}
@@ -221,13 +220,13 @@ public class Menu {
 		while (recipientAccount == null) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to transfer to: ");
-			for (Entry<Integer, String> account : database.getAllBankAccounts(senderID)) {
+			for (Entry<Integer, String> account : database.getAllBankAccounts()) {
 				if (account.getKey() != senderAccount.getID()) {
 					System.out.println("Account ID: " + account.getKey());
 				}
 			}
 			recipientID = getOption();
-			for (Entry<Integer, String> account : database.getAllBankAccounts(senderID)) {
+			for (Entry<Integer, String> account : database.getAllBankAccounts()) {
 				if (account.getKey() == recipientID && account.getKey() != senderAccount.getID()) {
 					recipientAccount = database.getAccount(recipientID);
 					break;
@@ -288,11 +287,9 @@ public class Menu {
 		System.out.println("Creating account...");
 		if (accountType == 1) {
 			BankAccount checking = new BankAccount(true, currentUser, 0.0, database.createUniqueID());
-			currentUser.addAsset(checking);
 			database.addAccount(checking);
 		} else {
 			BankAccount savings = new BankAccount(false, currentUser, 0.0, database.createUniqueID());
-			currentUser.addAsset(savings);
 			database.addAccount(savings);
 		}
 	}

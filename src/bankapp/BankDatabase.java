@@ -9,16 +9,41 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class BankDatabase {
+	private String name;
 	private Map<Integer, String> accounts;
 	private Map<String, User> users;
 	FileStorage storedAccounts;
 	FileStorage storedUsers;
 	
+	/**
+	 * CONSTRUCTOR TO USE IN TESTING
+	 */
+	public BankDatabase() {
+		name = "TEST BANK";
+		this.accounts = new HashMap<Integer, String>();
+        this.users = new HashMap<String, User>();
+        this.storedAccounts = new FileStorage("testAccounts");
+		this.storedUsers = new FileStorage("testUsers");
+	}
+	
+	/**
+	 * Constructs a new bank database that can be used in production code.
+	 * @param bankName Name of the bank database.
+	 */
 	public BankDatabase(String bankName) {
+		name = bankName;
 		this.accounts = new HashMap<Integer, String>();
         this.users = new HashMap<String, User>();
         this.storedAccounts = new FileStorage("accounts");
 		this.storedUsers = new FileStorage("users");
+	}
+	
+	/**
+	 * Gets the name of the bank database.
+	 * @return The name of the bank database.
+	 */
+	public String getName() {
+		return name;
 	}
 	
 	/**
@@ -78,6 +103,7 @@ public class BankDatabase {
 	 */
 	public void removeAccount(PersonalCapital account) {
 		accounts.remove(account.getID());
+		account.getOwner().removeAsset(account);
 	}
 	
 	/**
@@ -110,7 +136,7 @@ public class BankDatabase {
 		return null;
 	}
 	
-	public Set<Entry<Integer, String>> getAllBankAccounts(int ID) {
+	public Set<Entry<Integer, String>> getAllBankAccounts() {
 		return accounts.entrySet();
 	}
 	
