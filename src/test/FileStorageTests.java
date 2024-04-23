@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import bankapp.FileStorage;
+import bankapp.PersonalCapital;
 import bankapp.User;
 import bankapp.BankAccount;
 
@@ -86,7 +87,7 @@ public class FileStorageTests {
 		
 		for (int i = 0; i < 5000; i++) {
 			User person = new User(username, "@");
-			BankAccount newAcct = new BankAccount(false, person);
+			BankAccount newAcct = new BankAccount(false, person, 1);
 			accountList.put(ID, newAcct);
 			ID++;
 			username += (char) ('a' + i % 26);
@@ -97,12 +98,12 @@ public class FileStorageTests {
 		assertTrue(mapStored.exists());
 		assertTrue(mapStored.length() > 0);
 		
-		HashMap<Integer, BankAccount> readList = testFile.readBankAcctMap();
+		HashMap<Integer, PersonalCapital> readList = testFile.readBankAcctMap();
 		
 		Integer IDNew = 1;
 		String afterUser = "A";
 		for (int i = 0; i < 5000; i++) {
-			BankAccount result = accountList.get(IDNew);
+			PersonalCapital result = readList.get(IDNew);
 			assertEquals(result.getOwner().getUsername(), afterUser);
 			IDNew++;
 			afterUser += (char) ('a' + i % 26);

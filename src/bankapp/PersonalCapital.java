@@ -5,11 +5,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class PersonalCapital {
+public class PersonalCapital implements Serializable {
 
 	private boolean asset;
-	public double liquidValue;
-	private int increaseID = 1;
+	private double liquidValue;
 	private int ID;
 	private User owner;
 	private static final long serialVersionUID = -2305810380054L;
@@ -37,8 +36,12 @@ public class PersonalCapital {
 		PersonalCapital other = (PersonalCapital) obj;
 		return ID == other.ID;
 	}
+	
+	public boolean isAsset() {
+		return asset;
+	}
 
-	public long getID() {
+	public int getID() {
 		return ID;
 	}
 	
@@ -50,7 +53,7 @@ public class PersonalCapital {
 		}
 	}
 	
-	private void checkStartBalance(double startBalance) {
+	public void checkStartBalance(double startBalance) {
 		if (startBalance < 0)
 			throw new IllegalArgumentException("Start balance must be non-negative");
 	}

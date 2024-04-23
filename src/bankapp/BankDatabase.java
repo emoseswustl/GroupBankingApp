@@ -7,13 +7,13 @@ import java.util.Set;
 import java.util.HashSet;
 
 public class BankDatabase {
-	private Map<Integer, BankAccount> accounts;
+	private Map<Integer, String> accounts;
 	private Map<String, User> users;
 	FileStorage storedAccounts;
 	FileStorage storedUsers;
 	
 	public BankDatabase(String bankName) {
-		this.accounts = new HashMap<Integer, BankAccount>();
+		this.accounts = new HashMap<Integer, String>();
         this.users = new HashMap<String, User>();
         this.storedAccounts = new FileStorage("accounts");
 		this.storedUsers = new FileStorage("users");
@@ -41,11 +41,12 @@ public class BankDatabase {
 	}
 	
 	/**
-	 * Adds a bank account to the database.
-	 * @param account Account object to be added.
+	 * Adds a financial account to the database.
+	 * @param account PersonalCapital object to be added.
 	 */
-	public void addAccount(BankAccount account) {
-		accounts.put(account.getID(), account);
+	public void addAccount(PersonalCapital account) {
+		accounts.put(account.getID(), account.getOwner().getUsername());
+		account.getOwner().addAsset(account);
 	}
 	
 	/**
@@ -53,8 +54,9 @@ public class BankDatabase {
 	 * @param ID Account ID number.
 	 * @return Account object.
 	 */
-	public BankAccount getAccount(int ID) {
-		return accounts.get(ID);
+	public PersonalCapital getAccount(int ID) {
+		String owner = accounts.get(ID);
+		return users.get(owner).ge
 	}
 	
 	/**
@@ -80,34 +82,50 @@ public class BankDatabase {
 	 * @return A set storing all account numbers that are not owned by the user.
 	 */
 	public Set<Integer> accountsNotOwned(String username) {
-		Collection<BankAccount> accountList = this.accounts.values();
+		Collection<Integer> accountList = this.accounts.keySet();
 		Set<Integer> accountNumbers = new HashSet<Integer>();
-		for (BankAccount current: accountList) {
-			if (!current.getOwner().getUsername().equals(username)) {
+		for (Integer current: accountList) {
+			PersonalAsset acccount = 
+			if (!current.equals(username)) {
 				accountNumbers.add(current.getID());
 			}
 		}
 		return accountNumbers;
 	}
 	
+	/**
+	 * Check if a certain account is owned by the user.
+	 * @param accountID The account's ID number.
+	 * @param username The string representing the user that could own the account.
+	 * @return A boolean representing whether the user owns the account.
+	 */
 	public boolean isAccountOwned(Integer accountID, String username) {
-		BankAccount findAccount = this.accounts.get(accountID);
-		if (findAccount != null) {
-			return findAccount.getOwner().getUsername().equals(username);
+		String accountOwner = this.accounts.get(accountID);
+		if (accountOwner != null) {
+			return accountOwner.equals(username);
 		}
 		return false;
 	}
 	
+	/**
+	 * Queries the database to ensure that a unique account number is being created.
+	 * @return The account number as a six-digit integer.
+	 */
 	public int createUniqueID() {
-		BankAccount result = null;
+		String owner = null;
 		int newNumber = 0;
-		while (result == null) {
+		while (owner == null) {
 			newNumber = (int) Math.random()*1000000;
-			result = accounts.get(newNumber);
+			owner = accounts.get(newNumber);
 		}
 		return newNumber;
 	}
 	
+	/**
+	 * Checks whether the username being provided is unique.
+	 * @param name The user's potential name.
+	 * @return A boolean that is true if the username does not exist in the users map.
+	 */
 	public boolean isUsernameUnique(String name) {
 		return (users.get(name) == null);
 	}

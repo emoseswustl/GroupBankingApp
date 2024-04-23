@@ -86,10 +86,10 @@ public class FileStorage {
 	}
 
 	/**
-	 * Casts the result of readMap() to the format for Bank Account.
-	 * @return A map linking integers to bank accounts.
+	 * Casts the result of readMap() to the format for accounts.
+	 * @return A map linking integers to strings representing who owns the account.
 	 */
-	public HashMap<Integer, BankAccount> readBankAcctMap() {
-		return (HashMap<Integer, BankAccount>) readMap();
+	public HashMap<Integer, String> readBankAcctMap() {
+		return (HashMap<Integer, String>) readMap();
 	}
 }

@@ -21,12 +21,42 @@ public class User implements Serializable {
 		this.assetList = new Assets(this);
 	}
 	
-	public LinkedList<PersonalCapital> getLiabilities() {
+	public LinkedList<PersonalCapital> getLiabilityList() {
 		return this.liabilityList.getLiabilityList();
 	}
 	
-	public LinkedList<PersonalCapital> getAssets() {
+	public LinkedList<PersonalCapital> getAssetList() {
 		return this.assetList.getAssetList();
+	}
+	
+	public Liabilities getLiabilities() {
+		return liabilityList;
+	}
+	
+	public Assets getAssets() {
+		return assetList;
+	}
+	
+	public PersonalCapital getAccount(PersonalCapital account) {
+		if (account.isAsset()) {
+			assetList.
+		}
+	}
+	
+	public void addAsset(PersonalCapital asset) {
+		assetList.addAccount(asset);
+	}
+	
+	public void addLiability(PersonalCapital liability) {
+		liabilityList.addAccount(liability);
+	}
+	
+	public void removeAsset(PersonalCapital asset) {
+		assetList.removeAccount(asset);
+	}
+	
+	public void removeLiability(PersonalCapital liability) {
+		liabilityList.removeAccount(liability);
 	}
 	
 	public String getUsername() {
@@ -91,11 +121,11 @@ public class User implements Serializable {
 	public double getNetWorth() {
 		double total = 0.0;		
 		
-		for (PersonalCapital item: this.getAssets()) {
+		for (PersonalCapital item: this.getAssetList()) {
 			total += item.getLiquidValue();
 		}
 		
-		for (PersonalCapital item: this.getLiabilities()) {
+		for (PersonalCapital item: this.getLiabilityList()) {
 			total += item.getLiquidValue();
 		}
 		

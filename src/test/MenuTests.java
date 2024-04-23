@@ -61,7 +61,7 @@ public class MenuTests {
     public void testProcessingUserDeposit() {
     	setUp("");
         User user = new User("Bob", "password");
-        BankAccount account = new BankAccount(true, user, 100.0);
+        BankAccount account = new BankAccount(true, user, 100.0, 1);
         menu.setUser(user);
         menu.setCurrentAccount(account);
         user.addBankAccount(account);
@@ -73,7 +73,7 @@ public class MenuTests {
     public void testProcessingUserWithdraw() {
     	setUp("");
         User user = new User("Bob", "password");
-        BankAccount account = new BankAccount(true, user, 100.0);
+        BankAccount account = new BankAccount(true, user, 100.0, 1);
         menu.setUser(user);
         user.addBankAccount(account);
         menu.setCurrentAccount(account);
@@ -85,7 +85,7 @@ public class MenuTests {
     public void testMenuDeposit() {
     	setUp("50.0");
         User user = new User("Bob", "password");
-        BankAccount account = new BankAccount(true, user, 100.0);
+        BankAccount account = new BankAccount(true, user, 100.0, 1);
         user.addBankAccount(account);
         menu.setUser(user);
         menu.setCurrentAccount(account);
@@ -97,7 +97,7 @@ public class MenuTests {
     public void testMenuWithdraw() {
     	setUp("50.0");
         User user = new User("Bob", "password");
-        BankAccount account = new BankAccount(true, user, 100.0);
+        BankAccount account = new BankAccount(true, user, 100.0, 1);
         menu.setUser(user);
         user.addBankAccount(account);
         menu.setCurrentAccount(account);
@@ -108,8 +108,8 @@ public class MenuTests {
     @Test
     public void testMenuTransfer() {
         User user = new User("Bob", "password");
-        BankAccount account1 = new BankAccount(true, user, 100.0);
-        BankAccount account2 = new BankAccount(true, user, 50.0);
+        BankAccount account1 = new BankAccount(true, user, 100.0, 1);
+        BankAccount account2 = new BankAccount(true, user, 50.0, 22);
         user.addBankAccount(account1);
         user.addBankAccount(account2);
         setUp(account1.getID() + "\n" + account2.getID() + "\n" + "25.0\n");
@@ -124,7 +124,7 @@ public class MenuTests {
     public void testMenuCheckBalance() {
     	setUp("");
         User user = new User("Bob", "password");
-        BankAccount account = new BankAccount(true, user, 100.0);
+        BankAccount account = new BankAccount(true, user, 100.0, 1);
         menu.setUser(user);
         user.addBankAccount(account);
         menu.setCurrentAccount(account);
@@ -137,8 +137,8 @@ public class MenuTests {
     public void testMenuAccountInformation() {
     	setUp("");
         User user = new User("Bob", "password");
-        BankAccount account1 = new BankAccount(true, user, 100.0);
-        BankAccount account2 = new BankAccount(false, user, 200.0);
+        BankAccount account1 = new BankAccount(true, user, 100.0, 1);
+        BankAccount account2 = new BankAccount(false, user, 200.0, 2);
         user.addBankAccount(account1);
         user.addBankAccount(account2);
         menu.setUser(user);
@@ -155,8 +155,8 @@ public class MenuTests {
     @Test
     public void testMenuSwitchAccounts() {
         User user = new User("Bob", "password");
-        BankAccount account1 = new BankAccount(true, user, 100.0);
-        BankAccount account2 = new BankAccount(false, user, 200.0);
+        BankAccount account1 = new BankAccount(true, user, 100.0, 1);
+        BankAccount account2 = new BankAccount(false, user, 200.0, 2);
         user.addBankAccount(account1);
         user.addBankAccount(account2);
         setUp(account2.getID() + "\n");
@@ -180,8 +180,8 @@ public class MenuTests {
     @Test
     public void testMenuDeleteAccount() {
         User user = new User("Bob", "password");
-        BankAccount account1 = new BankAccount(true, user, 100.0);
-        BankAccount account2 = new BankAccount(false, user, 200.0);
+        BankAccount account1 = new BankAccount(true, user, 100.0, 1);
+        BankAccount account2 = new BankAccount(false, user, 200.0, 2);
         user.addBankAccount(account1);
         user.addBankAccount(account2);
         setUp(account1.getID() + "\n");
