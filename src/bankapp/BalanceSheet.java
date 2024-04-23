@@ -19,8 +19,8 @@ public class BalanceSheet implements Serializable {
 		return accounts;
 	}
 	
-	public void addAccount(PersonalCapital acct) {
-		accounts.add(acct);
+	public boolean addAccount(PersonalCapital acct) {
+		return accounts.add(acct);
 	}
 	
 	public boolean removeAccount(PersonalCapital acct) {

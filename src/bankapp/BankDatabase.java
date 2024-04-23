@@ -35,7 +35,7 @@ public class BankDatabase {
 	/**
 	 * Writes bank information to files with the FileStorage class.
 	 */
-	public void storeBank() {
+	public void saveBank() {
 		storedAccounts.writeMap(users);
 		storedUsers.writeMap(accounts);
 	}
@@ -49,14 +49,30 @@ public class BankDatabase {
 		account.getOwner().addAsset(account);
 	}
 	
+	public void addUser(User newUser) {
+		users.put(newUser.getUsername(), newUser);
+	}
+	
 	/**
 	 * Returns the account linked to a certain ID number.
 	 * @param ID Account ID number.
 	 * @return Account object.
 	 */
 	public PersonalCapital getAccount(int ID) {
-		String owner = accounts.get(ID);
-		return users.get(owner).ge
+		User owner = users.get(accounts.get(ID));
+		if (owner != null) {
+			for (PersonalCapital current: owner.getAssetList()) {
+				if (current.getID() == ID) {
+					return current;
+				}
+			}
+			for (PersonalCapital current: owner.getLiabilityList()) {
+				if (current.getID() == ID) {
+					return current;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**

@@ -7,14 +7,14 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 	private static final long serialVersionUID = -2305810380492L;
-	private LinkedList<BankAccount> userAccounts;
+	//private LinkedList<BankAccount> userAccounts;
 	private String password;
 	private String username;
 	private Liabilities liabilityList; 
 	private Assets assetList; 
 
 	public User(String username, String password) {
-		this.userAccounts = new LinkedList<BankAccount>();
+		//this.userAccounts = new LinkedList<BankAccount>();
 		this.username = Objects.requireNonNull(username, "Username must be non-null");
 		this.password = Objects.requireNonNull(password, "Password must be non-null");
 		this.liabilityList = new Liabilities(this);
@@ -37,26 +37,20 @@ public class User implements Serializable {
 		return assetList;
 	}
 	
-	public PersonalCapital getAccount(PersonalCapital account) {
-		if (account.isAsset()) {
-			assetList.
-		}
+	public boolean addAsset(PersonalCapital asset) {
+		return assetList.addAccount(asset);
 	}
 	
-	public void addAsset(PersonalCapital asset) {
-		assetList.addAccount(asset);
+	public boolean addLiability(PersonalCapital liability) {
+		return liabilityList.addAccount(liability);
 	}
 	
-	public void addLiability(PersonalCapital liability) {
-		liabilityList.addAccount(liability);
+	public boolean removeAsset(PersonalCapital asset) {
+		return assetList.removeAccount(asset);
 	}
 	
-	public void removeAsset(PersonalCapital asset) {
-		assetList.removeAccount(asset);
-	}
-	
-	public void removeLiability(PersonalCapital liability) {
-		liabilityList.removeAccount(liability);
+	public boolean removeLiability(PersonalCapital liability) {
+		return liabilityList.removeAccount(liability);
 	}
 	
 	public String getUsername() {
@@ -78,23 +72,22 @@ public class User implements Serializable {
 	public boolean login(String password) {
 		return this.password.equals(Objects.requireNonNull(password, "Password must be non-null"));
 	}
-
-	public boolean addBankAccount(BankAccount bankaccount) {
-		userAccounts.add(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
-		return true;
-	}
 	
-	public LinkedList<BankAccount> getBankAccounts() {
+	public LinkedList<PersonalCapital> getBankAccounts() {
+		LinkedList<PersonalCapital> userAccounts = new LinkedList<PersonalCapital>();
+		
+		for (PersonalCapital account: getAssetList()) {
+			if(account instanceof BankAccount) {
+				userAccounts.add(account);
+			}
+		}
+		
 		return userAccounts;
-	}
-
-	public boolean removeBankAccount(BankAccount bankaccount) {
-		return userAccounts.remove(Objects.requireNonNull(bankaccount, "BankAccount must be non-null"));
 	}
 
 	public int numberOfAccounts(String password) {
 		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
-			return userAccounts.size();
+			return getAssetList().size();
 		}
 		return 0;
 	}
@@ -102,9 +95,7 @@ public class User implements Serializable {
 	public double getLiquidatedAssets(String password) {
 		double liquidatedAssets = 0.0;
 		if (login(Objects.requireNonNull(password, "Password must be non-null"))) {
-			for (BankAccount bankaccount : userAccounts) {
-				liquidatedAssets += bankaccount.getBalance();
-			}
+			liquidatedAssets = getAssetBalance();
 		}
 		return liquidatedAssets;
 	}

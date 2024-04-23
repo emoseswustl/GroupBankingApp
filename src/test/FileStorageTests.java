@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 public class FileStorageTests {
 	private FileStorage testFile;
+	private FileStorage testFileUser;
 	
 	@Test
 	void readEmptyFileMap() {
@@ -81,29 +82,36 @@ public class FileStorageTests {
 	@Test
 	void readWriteBankAcctMap() {
 		testFile = new FileStorage("test");
-		HashMap<Integer, BankAccount> accountList = new HashMap<Integer, BankAccount>();
+		testFileUser = new FileStorage("hello");
+		HashMap<Integer, String> accountList = new HashMap<Integer, String>();
+		HashMap<String, User> userList = new HashMap<String, User>();
 		Integer ID = 1;
 		String username = "A";
 		
 		for (int i = 0; i < 5000; i++) {
 			User person = new User(username, "@");
-			BankAccount newAcct = new BankAccount(false, person, 1);
-			accountList.put(ID, newAcct);
+			BankAccount newAcct = new BankAccount(false, person, 0, ID);
+			accountList.put(ID, username);
+			person.addAsset(newAcct);
+			userList.put(username, person);
 			ID++;
 			username += (char) ('a' + i % 26);
 		}
 		
 		testFile.writeMap(accountList);
+		testFileUser.writeMap(userList);
 		File mapStored = testFile.getFile();
 		assertTrue(mapStored.exists());
 		assertTrue(mapStored.length() > 0);
 		
-		HashMap<Integer, PersonalCapital> readList = testFile.readBankAcctMap();
+		HashMap<Integer, String> readList = testFile.readBankAcctMap();
+		HashMap<String, User> readListUser = testFileUser.readUserMap();
 		
 		Integer IDNew = 1;
 		String afterUser = "A";
 		for (int i = 0; i < 5000; i++) {
-			PersonalCapital result = readList.get(IDNew);
+			String owner = readList.get(IDNew);
+			PersonalCapital result = readListUser.get(owner).getBankAccounts().getFirst();
 			assertEquals(result.getOwner().getUsername(), afterUser);
 			IDNew++;
 			afterUser += (char) ('a' + i % 26);

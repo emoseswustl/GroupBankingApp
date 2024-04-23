@@ -7,24 +7,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
-
 	private InputCaretaker caretaker;
-	private BankAccount currentAccount;
+	private PersonalCapital currentAccount;
 	private User currentUser;
 	private Boolean firstIteration = true;
 	private List<Integer> accountIDs;
 	
 	private BankDatabase database;
-	
-
-	private HashMap<Integer, BankAccount> accounts;
-	private HashMap<String, User> users;
-
-	
-
-	
-	private FileStorage bankAccts;
-	private FileStorage userAccts;
 
 	public Menu(Scanner scanner) {
 		this(new ScannerCaretaker(scanner));
@@ -34,8 +23,6 @@ public class Menu {
 	public Menu(InputCaretaker caretaker) {
 		this.caretaker = caretaker;
 		this.database = new BankDatabase("bank");
-		this.accounts = new HashMap<Integer, BankAccount>();
-		this.users = new HashMap<String, User>();
 		this.accountIDs = new LinkedList<Integer>();
 	}
 
@@ -50,26 +37,25 @@ public class Menu {
 			if (mainMenu.firstIteration) {
 				mainMenu.initizalizeBank();
 			}
-			getExecuteOptions(mainMenu);
+			mainMenu.getExecuteOptions();
 		}
 	}
 
-	private static void getExecuteOptions(Menu mainMenu) {
-		mainMenu.displayingOptions();
-		int option = mainMenu.getOption();
+	private void getExecuteOptions() {
+		displayingOptions();
+		int option = getOption();
 		while (option < 1 || option > 10) {
 			System.out.println("Invalid option!");
-			mainMenu.displayingOptions();
-			option = mainMenu.getOption();
+			displayingOptions();
+			option = getOption();
 		}
 		if (option == 10) {
 			System.out.println("Exiting...");
-			mainMenu.userAccts.writeMap(mainMenu.users);
-			mainMenu.bankAccts.writeMap(mainMenu.accounts);
+			database.saveBank();
 			System.exit(0);
 		}
-		mainMenu.executeSelectedOption(option);
-		mainMenu.firstIteration = false;
+		executeSelectedOption(option);
+		firstIteration = false;
 	}
 
 	private void printUsers() {
@@ -85,7 +71,7 @@ public class Menu {
 			System.out.println("Database files loaded! \n");
 			printUsers();
 			String userSelect = "";
-			while (users.get(userSelect) == null) {
+			while (database.getUser(userSelect) == null) {
 				if (userSelect.equals("new")) {
 					createNewAccounts();
 					return;
@@ -94,27 +80,15 @@ public class Menu {
 				userSelect = getString();
 			}
 			String password = "";
-			while (!users.get(userSelect).getPassword().equals(password)) {
+			while (!database.getUser(userSelect).getPassword().equals(password)) {
 				System.out.println("Enter your password: ");
 				password = getString();
 			}
-			currentUser = users.get(userSelect);
+			currentUser = database.getUser(userSelect);
 			currentAccount = currentUser.getBankAccounts().getFirst();
 		} else {
 			createNewAccounts();
 		}
-		
-		/*
-		bankAccts = new FileStorage("accounts");
-		userAccts = new FileStorage("users");
-		if (bankAccts.readBankAcctMap() != null && userAccts.readUserMap() != null) {
-			
-			accounts = bankAccts.readBankAcctMap();
-			users = userAccts.readUserMap();
-
-			
-		} 
-		*/
 	}
 
 	private void createNewAccounts() {
@@ -124,22 +98,14 @@ public class Menu {
 		String password = getString();
 		displayFirstIterationEnd();
 		User user = new User(name, password);
-		createUser(name, user);
+		database.addUser(user);
 		setUser(user);
-		currentAccount = new BankAccount(true, user, 10000);
-		user.addBankAccount(currentAccount);
+		currentAccount = new BankAccount(true, user, 10000, database.createUniqueID());
+		user.addAsset(currentAccount);
 	}
 
 	public void setUser(User user) {
 		this.currentUser = user;
-	}
-
-	public void createUser(String name, User user) {
-		users.put(name, user);
-	}
-
-	public User getUser(String name) {
-		return users.get(name);
 	}
 
 	// Code that just displays stuff - no tests needed
@@ -182,8 +148,6 @@ public class Menu {
 		case 9:
 			menuDeleteAccount();
 			break;
-		case 9:
-			menuLoans();
 		}
 	}
 
@@ -291,7 +255,7 @@ public class Menu {
 	}
 
 	public void menuSwitchAccounts() {
-		if (accounts.size() < 2) {
+		if (currentUser.getAssetList().size() < 2) {
 			System.out.println("You need at least two accounts to switch accounts");
 			return;
 		}
@@ -319,25 +283,33 @@ public class Menu {
 		}
 		System.out.println("Creating account...");
 		if (accountType == 1) {
-			BankAccount checking = new BankAccount(true, currentUser, 0.0);
+			BankAccount checking = new BankAccount(true, currentUser, 0.0, database.createUniqueID());
 			addAccount(checking);
 		} else {
-			BankAccount savings = new BankAccount(false, currentUser, 0.0);
+			BankAccount savings = new BankAccount(false, currentUser, 0.0, database.createUniqueID());
 			addAccount(savings);
 		}
 	}
 
 	public void menuDeleteAccount() {
-		if (accounts.size() < 1) {
+		if (currentUser.getAssetList().size() < 1) {
 			System.out.println("You need at least one account to delete an account");
 			return;
 		}
 		System.out.println("Choose from the following account IDs to delete an account: ");
 		accountIDs.clear();
-		for (BankAccount account : currentUser.getBankAccounts()) {
+		System.out.println("Assets:");
+		for (PersonalCapital account : currentUser.getLiabilityList()) {
 			System.out.println("Account ID: " + account.getID());
 			accountIDs.add(account.getID());
 		}
+		/*
+		System.out.println("\n Liabilities:");
+		for (PersonalCapital account : currentUser.getAssetList()) {
+			System.out.println("Account ID: " + account.getID());
+			accountIDs.add(account.getID());
+		}
+		*/
 		int deleteID = getOption();
 		while (!accountIDs.contains(deleteID)) {
 			System.out.println("Invalid account ID!");
@@ -378,7 +350,7 @@ public class Menu {
 		System.out.println("You are now viewing assets.");
 		// will fix below line, discussing implementing the lists into bank account
 		// class
-		System.out.println("Your total assets' liquid value is " + currentUser.getTotalLiquidValue());
+		System.out.println("Your total assets' liquid value is " + currentUser.getAssetBalance());
 		boolean exit = false;
 		while (exit != true) {
 			System.out.println("What would you like to do next?");
@@ -387,9 +359,9 @@ public class Menu {
 			System.out.println("3. Exit");
 			int option = caretaker.getInt();
 			if (option == 1) {
-				for (PersonalCapital pc : currentUser.assetList.assets) {
+				for (PersonalCapital pc : currentUser.getAssetList()) {
 					int id = pc.getID();// fix ID method
-					Double val = pc.getLiquidValue(pc);
+					Double val = pc.getLiquidValue();
 					System.out.println(id + " value: " + val);
 				}
 			} else if (option == 2) {
@@ -404,7 +376,7 @@ public class Menu {
 					System.out.println("Which account would you like to pay from? Enter ID number: ");
 					int idnumber = caretaker.getInt();
 					// pseudocode: BankAccount acct = getAccount (idnumber)
-					findFund().addYearlyPayment(acct, deposit);
+					currentUser.findFund().addYearlyPayment(acct, deposit);
 				} else if (opt == 2) {
 					System.out.println("Total value of retirement fund is : " + findFund().getLiquidValue(findFund()));
 				} else if (opt == 3) {
@@ -416,8 +388,8 @@ public class Menu {
 					double income = caretaker.getDouble();
 					System.out.println("What is the annual rate you would like to contribute?");
 					double rate = caretaker.getDouble();
-					RetirementFund retirementfund = new RetirementFund(rate, income);
-					currentUser.assetList.assets.add(retirementfund);
+					RetirementFund retirementfund = new RetirementFund(rate, income, currentUser, database.createUniqueID());
+					currentUser.addAsset(retirementfund);
 				}
 
 			} else if (option == 3) {
@@ -434,7 +406,7 @@ public class Menu {
 		System.out.println("You are now viewing liabilities.");
 		// will fix below line, discussing implementing the lists into bank account
 		// class
-		System.out.println("Your total liabilities' liquid value is " + currentUser.getTotalLiquidValue(liabilities));
+		System.out.println("Your total liabilities' liquid value is " + currentUser.getLiabilityBalance());
 		boolean exit = false;
 		while (exit != true) {
 			System.out.println("What would you like to do next?");
@@ -446,18 +418,18 @@ public class Menu {
 			System.out.println("6. Exit");
 			int option = caretaker.getInt();
 			if (option == 1) {
-				for (PersonalCapital pc : currentUser.getLiabilities()) {
-					int id2 = pc.getID();// fix ID method
-					Double val = pc.getLiquidValue(pc);
+				for (PersonalCapital pc: currentUser.getLiabilityList()) {
+					int id2 = pc.getID();
+					Double val = pc.getLiquidValue();
 					System.out.println(id2 + " value: " + val);
 				}
 			} else if (option == 2) {
 				System.out.println("Which liabilitiy would you like to remove? Enter ID number");
 				int idnum = caretaker.getInt();
 				boolean success = false;
-				for (PersonalCapital x : currentUser.liabilityList.liabilities) {
-					if (x.getID() == idnum) { // fix ID method
-						success = currentUser.liabilityList.liabilities.remove(x);
+				for (PersonalCapital x : currentUser.getLiabilityList()) {
+					if (x.getID() == idnum) {
+						success = currentUser.removeLiability(x);;
 					}
 				}
 				if (success == true) {
@@ -479,8 +451,8 @@ public class Menu {
 					double rate = caretaker.getDouble();
 					System.out.println("How many years is your mortgage?");
 					int years = caretaker.getInt();
-					Mortgage newM = new Mortgage(name, due, rate, years);
-					currentUser.liabilityList.liabilities.add(newM);
+					Mortgage newM = new Mortgage(name, due, rate, years, currentUser);
+					currentUser.addLiability(newM);
 				} else if (op == 2) {
 					// need to add with loan attributes
 				}
@@ -489,12 +461,11 @@ public class Menu {
 			} else if (option == 5) {
 				System.out.println("You are accessing mortgages.");
 				int count = 0;
-				for (int i = 0; i < currentUser.liabilityList.liabilities.size(); i++) {
+				for (int i = 0; i < currentUser.getLiabilityList().size(); i++) {
 					Object Mortgage;
-					if ((currentUser.liabilityList.liabilities.get(i)).equals(Mortgage)) {
+					if (currentUser.getLiabilityList().get(i).equals(Mortgage)) {
 						count++;
-						System.out.println(count + "." + currentUser.liabilityList.liabilities.get(i).toString());
-
+						System.out.println(count + "." + currentUser.getLiabilityList().get(i).toString());
 					}
 				}
 				boolean exit2 = false;
@@ -508,7 +479,7 @@ public class Menu {
 					if (select == 1) {
 						System.out.println("What mortgage would you like to pay? Select number from list abbove");
 						int wow = caretaker.getInt();
-						Mortgage paying = (Mortgage) currentUser.liabilityList.liabilities.get(wow);
+						Mortgage paying = (Mortgage) currentUser.getLiabilityList().get(wow);
 						double total = paying.getInterestPayment() + paying.getMortgagePayment();
 						System.out.println(
 								"Your mortgage due this month is: " + total + ". How much are you paying today?");
@@ -557,19 +528,19 @@ public class Menu {
 					} else if (option == 2) {
 						System.out.println("What mortgage would you like to see? Select number from list abbove");
 						int wow = caretaker.getInt();
-						Mortgage view = (Mortgage) currentUser.liabilityList.liabilities.get(wow);
+						Mortgage view = (Mortgage) currentUser.getLiabilityList().get(wow);
 						double total = view.getInterestPayment() + view.getMortgagePayment();
 						System.out.println("Payment of " + total + " due to this month");
 					} else if (option == 3) {
 						exit = true;
 					} else {
-						System.out.println("Please selection option 1-3.");
+						System.out.println("Please select option 1-3.");
 					}
 				}
 			} else if (option == 6) {
 				exit = true;
 			} else {
-				System.out.println("Invalid option. Please selection an option 1-6.");
+				System.out.println("Invalid option. Please select an option 1-6.");
 			}
 
 		}
@@ -672,16 +643,7 @@ public class Menu {
 		System.out.println("Your balance is now: " + currentAccount.getBalance());
 	}
 
-	public void addAccount(BankAccount account) {
-		currentUser.addBankAccount(account);
-		accounts.put(account.getID(), account);
-	}
-
 	public void setCurrentAccount(BankAccount account) {
 		this.currentAccount = account;
-	}
-
-	public BankAccount getAccount() {
-		return this.currentAccount;
 	}
 }

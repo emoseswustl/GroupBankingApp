@@ -34,7 +34,7 @@ public class RetirementFund extends PersonalCapital {
 	}
 	
 	public void incrementYear() {
-		this.paidYearly = 0; 
+		this.paidYearly++; 
 	}
 	
 }

@@ -32,7 +32,7 @@ class BankAccountTests {
 
 	@Test
 	void testTransfer() {
-		BankAccount recipient = new BankAccount(true, null, 0);
+		BankAccount recipient = new BankAccount(true, null, 0, 22);
 		testAccount.transfer(50, recipient);
 		assertEquals(initialBalance - 50, testAccount.getBalance(), 0.01);
 		assertEquals(50, recipient.getBalance(), 0.01);
@@ -80,7 +80,7 @@ class BankAccountTests {
 
 	@Test
 	void testMultipleTransfers() {
-		BankAccount recipient = new BankAccount(true, null, 0);
+		BankAccount recipient = new BankAccount(true, null, 0, 2);
 		testAccount.transfer(50, recipient);
 		testAccount.transfer(25, recipient);
 		assertEquals(initialBalance - 75, testAccount.getBalance(), 0.01);
@@ -111,13 +111,13 @@ class BankAccountTests {
 
 	@Test
 	void testNegativeTransfer() {
-		BankAccount recipient = new BankAccount(true, null, 0);
+		BankAccount recipient = new BankAccount(true, null, 0, 1);
 		assertThrows(IllegalArgumentException.class, () -> testAccount.transfer(-50, recipient));
 	}
 
 	@Test
 	void testOverdrawnTransfer() {
-		BankAccount recipient = new BankAccount(true, null, 0);
+		BankAccount recipient = new BankAccount(true, null, 0, 1);
 		assertThrows(IllegalArgumentException.class, () -> testAccount.transfer(initialBalance + 1, recipient));
 	}
 }
