@@ -305,7 +305,7 @@ public class Menu {
 		System.out.println("Choose from the following account IDs to delete an account (you cannot delete debts): ");
 		accountIDs.clear();
 		System.out.println("Assets:");
-		for (PersonalCapital account : currentUser.getLiabilityList()) {
+		for (PersonalCapital account : currentUser.getAssetList()) {
 			System.out.println("Account ID: " + account.getID());
 			accountIDs.add(account.getID());
 		}
@@ -313,14 +313,15 @@ public class Menu {
 		while (!accountIDs.contains(deleteID)) {
 			System.out.println("Invalid account ID!");
 			System.out.println("Choose from the following account IDs to delete an account: ");
-			for (PersonalCapital account : currentUser.getBankAccounts()) {
+			for (PersonalCapital account : currentUser.getAssetList()) {
 				System.out.println("Account ID: " + account.getID());
 			}
 			deleteID = getOption();
 		}
 		PersonalCapital toRemove = database.getAccount(deleteID);
-		currentUser.removeAsset(toRemove);
 		database.removeAccount(toRemove);
+		currentUser.removeAsset(toRemove);
+
 	}
 
 	public void assetsAndLiabilities() {
@@ -643,6 +644,10 @@ public class Menu {
 
 	public void setCurrentAccount(BankAccount account) {
 		this.currentAccount = account;
+	}
+	
+	public PersonalCapital getCurrentAccount() {
+		return this.currentAccount;
 	}
 	
 	public BankDatabase getDatabase() {

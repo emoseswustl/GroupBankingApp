@@ -63,7 +63,7 @@ public class MenuTests {
 		BankAccount account = new BankAccount(true, user, 100.0, 1);
 		menu.setUser(user);
 		menu.setCurrentAccount(account);
-		user.addBankAccount(account);
+		user.addAsset(account);
 		menu.processingUserDeposit(50.0);
 		assertEquals(150.0, account.getBalance());
 	}
@@ -74,7 +74,7 @@ public class MenuTests {
 		User user = new User("Bob", "password");
 		BankAccount account = new BankAccount(true, user, 100.0, 1);
 		menu.setUser(user);
-		user.addBankAccount(account);
+		user.addAsset(account);
 		menu.setCurrentAccount(account);
 		menu.processingUserWithdraw(50.0);
 		assertEquals(50.0, account.getBalance());
@@ -85,11 +85,11 @@ public class MenuTests {
 		setUp("50.0");
 		User user = new User("Bob", "password");
 		BankAccount account = new BankAccount(true, user, 100.0, 1);
-		user.addBankAccount(account);
+		user.addAsset(account);
 		menu.setUser(user);
 		menu.setCurrentAccount(account);
 		menu.menuDeposit();
-		assertEquals(150.0, menu.getAccount().getBalance());
+		assertEquals(150.0, account.getBalance());
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class MenuTests {
 		User user = new User("Bob", "password");
 		BankAccount account = new BankAccount(true, user, 100.0, 1);
 		menu.setUser(user);
-		user.addBankAccount(account);
+		user.addAsset(account);
 		menu.setCurrentAccount(account);
 		menu.menuWithdraw();
 		assertEquals(50.0, account.getBalance());
@@ -109,14 +109,16 @@ public class MenuTests {
 		User user = new User("Bob", "password");
 		BankAccount account1 = new BankAccount(true, user, 100.0, 1);
 		BankAccount account2 = new BankAccount(true, user, 50.0, 22);
-		user.addBankAccount(account1);
-		user.addBankAccount(account2);
+		user.addAsset(account1);
+		user.addAsset(account2);
 		setUp(account1.getID() + "\n" + account2.getID() + "\n" + "25.0\n");
+		menu.getDatabase().addAccount(account1);
+		menu.getDatabase().addAccount(account2);
 		menu.setCurrentAccount(account1);
 		menu.setUser(user);
 		menu.menuTransfer();
-		assertEquals(75.0, account1.getBalance());
-		assertEquals(75.0, account2.getBalance());
+		assertEquals(75.0, menu.getDatabase().getAccount(1));
+		assertEquals(75.0, menu.getDatabase().getAccount(22));
 	}
 
 	@Test
@@ -125,7 +127,7 @@ public class MenuTests {
 		User user = new User("Bob", "password");
 		BankAccount account = new BankAccount(true, user, 100.0, 1);
 		menu.setUser(user);
-		user.addBankAccount(account);
+		user.addAsset(account);
 		menu.setCurrentAccount(account);
 		menu.menuCheckBalance();
 		String output = outputStream.toString().trim();
@@ -138,8 +140,8 @@ public class MenuTests {
 		User user = new User("Bob", "password");
 		BankAccount account1 = new BankAccount(true, user, 100.0, 1);
 		BankAccount account2 = new BankAccount(false, user, 200.0, 2);
-		user.addBankAccount(account1);
-		user.addBankAccount(account2);
+		user.addAsset(account1);
+		user.addAsset(account2);
 		menu.setUser(user);
 		menu.menuAccountInformation();
 		String output = outputStream.toString().trim();
@@ -156,14 +158,15 @@ public class MenuTests {
 		User user = new User("Bob", "password");
 		BankAccount account1 = new BankAccount(true, user, 100.0, 1);
 		BankAccount account2 = new BankAccount(false, user, 200.0, 2);
-		user.addBankAccount(account1);
-		user.addBankAccount(account2);
+		user.addAsset(account1);
+		user.addAsset(account2);
 		setUp(account2.getID() + "\n");
-		menu.setCurrentAccount(account2);
+		menu.getDatabase().addAccount(account1);
+		menu.getDatabase().addAccount(account2);
+		menu.setCurrentAccount(account1);
 		menu.setUser(user);
-		menu.createUser("Bob", user);
 		menu.menuSwitchAccounts();
-		assertEquals(account2, menu.getAccount());
+		assertEquals(account2, menu.getCurrentAccount());
 	}
 
 	@Test
@@ -185,9 +188,11 @@ public class MenuTests {
 		user.addAsset(account2);
 		setUp(account1.getID() + "\n");
 		menu.setUser(user);
-		menu.createUser("Bob", user);
+		menu.getDatabase().addUser(user);
+		menu.getDatabase().addAccount(account1);
+		menu.getDatabase().addAccount(account2);
 		menu.menuDeleteAccount();
-		assertEquals(2, user.getBankAccounts().size());
+		assertEquals(1, user.getBankAccounts().size());
 		assertEquals(account2, user.getBankAccounts().getFirst());
 	}
 
