@@ -205,16 +205,16 @@ public class Menu {
 		}
 
 		System.out.println("Choose from the following account IDs to transfer to: ");
-		for (PersonalCapital account : currentUser.getBankAccounts()) {
-			if (account != senderAccount) {
-				System.out.println("Account ID: " + account.getID());
+		for (Entry<Integer, String> account : database.getAllBankAccounts(senderID)) {
+			if (account.getKey() != senderAccount.getID()) {
+				System.out.println("Account ID: " + account.getKey());
 			}
 		}
 
 		int recipientID = getOption();
 		PersonalCapital recipientAccount = null;
 		recipientAccount = database.getAccount(recipientID);
-		if (recipientAccount == senderAccount) {
+		if (recipientAccount.getID() == senderAccount.getID()) {
 			recipientAccount = null;
 		}
 
