@@ -20,7 +20,10 @@ public class BalanceSheet implements Serializable {
 	}
 	
 	public boolean addAccount(PersonalCapital acct) {
-		return accounts.add(acct);
+		if (!accounts.contains(acct)) {
+			return accounts.add(acct);
+		}
+		return false;
 	}
 	
 	public boolean removeAccount(PersonalCapital acct) {

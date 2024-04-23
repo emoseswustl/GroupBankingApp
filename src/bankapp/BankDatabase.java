@@ -21,6 +21,15 @@ public class BankDatabase {
 	}
 	
 	/**
+	 * Clears the bank for testing and diagnosis issues.
+	 */
+	public void clearBank() {
+		accounts.clear();
+		users.clear();
+		saveBank();
+	}
+	
+	/**
 	 * Loads bank from files using the FileStorage class.
 	 * @return A boolean indicating whether the transfer succeeded.
 	 */
@@ -37,8 +46,8 @@ public class BankDatabase {
 	 * Writes bank information to files with the FileStorage class.
 	 */
 	public void saveBank() {
-		storedAccounts.writeMap(users);
-		storedUsers.writeMap(accounts);
+		storedAccounts.writeMap(accounts);
+		storedUsers.writeMap(users);
 	}
 	
 	/**
@@ -151,7 +160,7 @@ public class BankDatabase {
 		String owner = "default";
 		int newNumber = 0;
 		while (owner != null) {
-			newNumber = (int) Math.random()*1000000;
+			newNumber = (int) (Math.random()*1000000);
 			owner = accounts.get(newNumber);
 		}
 		return newNumber;

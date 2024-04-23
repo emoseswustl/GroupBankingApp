@@ -62,6 +62,7 @@ class UserTests {
     void testNumberOfAccountsSuccess() {
         user.addAsset(firstAccount);
         user.addAsset(secondAccount);
+        user.addAsset(secondAccount);
         assertEquals(2, user.numberOfAccounts(CORRECT_PASSWORD));
     }
 
