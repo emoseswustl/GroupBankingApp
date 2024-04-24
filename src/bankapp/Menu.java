@@ -1,10 +1,11 @@
 package bankapp;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Menu {
@@ -29,6 +30,7 @@ public class Menu {
 
 	// not tested
 	public static void main(String[] args) {
+		
 		runMainMenu();
 	}
 
@@ -39,6 +41,57 @@ public class Menu {
 				mainMenu.initizalizeBank();
 			}
 			mainMenu.getExecuteOptions();
+		}
+	}
+
+	public class StockMarketSimulator {
+
+		private Map<String, Double> stockPrices = new HashMap<>();
+		private Random random = new Random();
+	
+		public void updateMarketPrices() {
+			String[] symbols = {"AAPL", "GOOGL", "AMZN", "MSFT", "TSLA"};
+			for (String symbol : symbols) {
+				double randomPrice = 100 + (1000 - 100) * random.nextDouble(); // Prices between 100 and 1000
+				stockPrices.put(symbol, randomPrice);
+			}
+		}
+	
+		public void tradeAtMarketPrices() {
+			for (Map.Entry<String, Double> entry : stockPrices.entrySet()) {
+				String symbol = entry.getKey();
+				double currentPrice = entry.getValue();
+				double targetBuyPrice = currentPrice - 10;
+				double targetSellPrice = currentPrice + 10;
+				int quantity = 10;
+	
+				StockTrader.tradeStock(symbol, currentPrice, targetBuyPrice, targetSellPrice, quantity);
+			}
+		}
+	}
+	
+	public static class StockTrader {
+	
+		public static  void tradeStock(String symbol, double currentPrice, double targetBuyPrice, double targetSellPrice, int quantity) {
+			if (currentPrice <= targetBuyPrice) {
+				buyStock(symbol, currentPrice, quantity);
+			} else if (currentPrice >= targetSellPrice) {
+				sellStock(symbol, currentPrice, quantity);
+			} else {
+				holdStock(symbol);
+			}
+		}
+	
+		private static  void buyStock(String symbol, double price, int quantity) {
+			System.out.println("Bought " + quantity + " shares of " + symbol + " at $" + price + " each.");
+		}
+	
+		private static  void sellStock(String symbol, double price, int quantity) {
+			System.out.println("Sold " + quantity + " shares of " + symbol + " at $" + price + " each.");
+		}
+	
+		private static void holdStock(String symbol) {
+			System.out.println("Holding shares of " + symbol);
 		}
 	}
 
@@ -343,6 +396,13 @@ public class Menu {
 		}
 	}
 
+
+	
+
+    
+
+   
+
 	public void menuAssets() {
 		System.out.println("You are now viewing assets.");
 		// will fix below line, discussing implementing the lists into bank account
@@ -473,7 +533,7 @@ public class Menu {
 					System.out.println("3. Exit");
 					int select = caretaker.getInt();
 					if (select == 1) {
-						System.out.println("What mortgage would you like to pay? Select number from list abbove");
+						System.out.println("What mortgage would you like to pay? Select number from list above");
 						int wow = caretaker.getInt();
 						Mortgage paying = (Mortgage) currentUser.getLiabilityList().get(wow);
 						double total = paying.getInterestPayment() + paying.getMortgagePayment();
@@ -522,7 +582,7 @@ public class Menu {
 							}
 						}
 					} else if (option == 2) {
-						System.out.println("What mortgage would you like to see? Select number from list abbove");
+						System.out.println("What mortgage would you like to see? Select number from list above");
 						int wow = caretaker.getInt();
 						Mortgage view = (Mortgage) currentUser.getLiabilityList().get(wow);
 						double total = view.getInterestPayment() + view.getMortgagePayment();
@@ -576,8 +636,11 @@ public class Menu {
 
 		// Display the monthly payment to the user
 		System.out.printf("Your monthly loan payment is: $%.2f%n", monthlyPayment);
+		scanner.close();
 
 		return monthlyPayment;
+		
+		
 	}
 
 	public double menuLoans() {
