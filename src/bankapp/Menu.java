@@ -13,6 +13,7 @@ public class Menu {
 	private User currentUser;
 	private Boolean firstIteration = true;
 	private List<Integer> accountIDs;
+	private List<String> contextOptions;
 	
 	private BankDatabase database;
 
@@ -25,7 +26,22 @@ public class Menu {
 		this.caretaker = caretaker;
 		this.database = new BankDatabase("bank");
 		this.accountIDs = new LinkedList<Integer>();
+		initializeContextOptions();
 	}
+
+	private void initializeContextOptions() {
+        contextOptions = new LinkedList<>();
+        contextOptions.add("Banking");
+        contextOptions.add("Finances");
+        contextOptions.add("Investments");
+        contextOptions.add("Loans");
+        contextOptions.add("Mortgages");
+        contextOptions.add("Retirement");
+        contextOptions.add("Savings");
+        contextOptions.add("Budgeting");
+        contextOptions.add("Credit Scores");
+        contextOptions.add("Financial Advice");
+    }
 
 	// not tested
 	public static void main(String[] args) {
@@ -148,6 +164,9 @@ public class Menu {
 			break;
 		case 9:
 			menuDeleteAccount();
+			break;
+		case 10:
+			talkToFriend();
 			break;
 		}
 	}
@@ -320,6 +339,24 @@ public class Menu {
 		currentUser.removeAsset(toRemove);
 
 	}
+
+	public void talkToFriend() {
+		System.out.println("Select a context to discuss with your friend:");
+        for (int i = 0; i < contextOptions.size(); i++) {
+            System.out.println((i + 1) + ". " + contextOptions.get(i));
+        }
+        int contextChoice = getOption();
+        while (contextChoice < 1 || contextChoice > contextOptions.size()) {
+            System.out.println("Invalid context choice!");
+            contextChoice = getOption();
+        }
+        String selectedContext = contextOptions.get(contextChoice - 1);
+        System.out.println("You have selected the context: " + selectedContext);
+        System.out.println("Enter your message to send to your friend:");
+        String userInput = getString();
+        String response = LLMInterface.sendQueryToLLM(userInput, selectedContext);
+        System.out.println("Friend's response: " + response);
+    }
 	
 	public int getValidAccountNumber() {
 		accountIDs.clear();
@@ -598,6 +635,8 @@ public class Menu {
 
 		// Display the monthly payment to the user
 		System.out.printf("Your monthly loan payment is: $%.2f%n", monthlyPayment);
+		
+		scanner.close();
 
 		return monthlyPayment;
 	}
