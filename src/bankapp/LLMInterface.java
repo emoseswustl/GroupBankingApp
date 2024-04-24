@@ -35,17 +35,22 @@ public class LLMInterface {
         connection.setDoOutput(true);
 
         // Sets the parameters for the request
+        
         double topK = 0.9;
         double topP = 0.1;
         double temperature = 0.9;
         int maxNewTokens = 1024;
-        boolean doSample = false;
+        String prefix = "";
+        
+
+        // Keep Default Values by passing nothing for these parameters
+        
+/*      boolean doSample = false;
         boolean returnText = true;
         boolean returnFullText = true;
         boolean returnTensors = false;
         boolean cleanUpTokenizationSpaces = false;
-        String prefix = "";
-        String handleLongGeneration = "hole";
+        String handleLongGeneration = "hole"; */
 
 
         // Create a StringBuilder to build the JSON input string
@@ -68,25 +73,25 @@ public class LLMInterface {
         jsonBuilder.append(maxNewTokens);
         jsonBuilder.append(",");
         jsonBuilder.append("\"do_sample\":");
-        jsonBuilder.append(doSample);
+  //    jsonBuilder.append(doSample);
         jsonBuilder.append(",");
         jsonBuilder.append("\"return_text\":");
-        jsonBuilder.append(returnText);
+    // jsonBuilder.append(returnText);
         jsonBuilder.append(",");
         jsonBuilder.append("\"return_full_text\":");
-        jsonBuilder.append(returnFullText);
+     // jsonBuilder.append(returnFullText);
         jsonBuilder.append(",");
         jsonBuilder.append("\"return_tensors\":");
-        jsonBuilder.append(returnTensors);
+    //  jsonBuilder.append(returnTensors);
         jsonBuilder.append(",");
         jsonBuilder.append("\"clean_up_tokenization_spaces\":");
-        jsonBuilder.append(cleanUpTokenizationSpaces);
+    //  jsonBuilder.append(cleanUpTokenizationSpaces);
         jsonBuilder.append(",");        
         jsonBuilder.append("\"prefix\":\"");
         jsonBuilder.append(prefix);
         jsonBuilder.append("\",");        
         jsonBuilder.append("\"handle_long_generation\":\"");
-        jsonBuilder.append(handleLongGeneration);
+    //  jsonBuilder.append(handleLongGeneration);
         jsonBuilder.append("\"");        
         jsonBuilder.append("}");
         jsonBuilder.append("}");
@@ -127,4 +132,5 @@ public class LLMInterface {
         return response.toString();
 
     }
+
 }

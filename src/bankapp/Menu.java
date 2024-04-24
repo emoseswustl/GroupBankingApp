@@ -1,7 +1,7 @@
 package bankapp;
 
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -354,8 +354,14 @@ public class Menu {
         System.out.println("You have selected the context: " + selectedContext);
         System.out.println("Enter your message to send to your friend:");
         String userInput = getString();
-        String response = LLMInterface.sendQueryToLLM(userInput, selectedContext);
-        System.out.println("Friend's response: " + response);
+        String response;
+		try {
+			response = LLMInterface.sendQueryToLLM(userInput, selectedContext);
+			System.out.println("Friend's response: " + response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
     }
 	
 	public int getValidAccountNumber() {
