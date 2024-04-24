@@ -44,56 +44,8 @@ public class Menu {
 		}
 	}
 
-	public class StockMarketSimulator {
 
-		private Map<String, Double> stockPrices = new HashMap<>();
-		private Random random = new Random();
-	
-		public void updateMarketPrices() {
-			String[] symbols = {"AAPL", "GOOGL", "AMZN", "MSFT", "TSLA"};
-			for (String symbol : symbols) {
-				double randomPrice = 100 + (1000 - 100) * random.nextDouble(); // Prices between 100 and 1000
-				stockPrices.put(symbol, randomPrice);
-			}
-		}
-	
-		public void tradeAtMarketPrices() {
-			for (Map.Entry<String, Double> entry : stockPrices.entrySet()) {
-				String symbol = entry.getKey();
-				double currentPrice = entry.getValue();
-				double targetBuyPrice = currentPrice - 10;
-				double targetSellPrice = currentPrice + 10;
-				int quantity = 10;
-	
-				StockTrader.tradeStock(symbol, currentPrice, targetBuyPrice, targetSellPrice, quantity);
-			}
-		}
-	}
-	
-	public static class StockTrader {
-	
-		public static  void tradeStock(String symbol, double currentPrice, double targetBuyPrice, double targetSellPrice, int quantity) {
-			if (currentPrice <= targetBuyPrice) {
-				buyStock(symbol, currentPrice, quantity);
-			} else if (currentPrice >= targetSellPrice) {
-				sellStock(symbol, currentPrice, quantity);
-			} else {
-				holdStock(symbol);
-			}
-		}
-	
-		private static  void buyStock(String symbol, double price, int quantity) {
-			System.out.println("Bought " + quantity + " shares of " + symbol + " at $" + price + " each.");
-		}
-	
-		private static  void sellStock(String symbol, double price, int quantity) {
-			System.out.println("Sold " + quantity + " shares of " + symbol + " at $" + price + " each.");
-		}
-	
-		private static void holdStock(String symbol) {
-			System.out.println("Holding shares of " + symbol);
-		}
-	}
+
 
 	private void getExecuteOptions() {
 		displayingOptions();
