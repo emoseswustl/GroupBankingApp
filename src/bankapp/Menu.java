@@ -61,12 +61,12 @@ public class Menu {
 	private void getExecuteOptions() {
 		displayingOptions();
 		int option = getOption();
-		while (option < 1 || option > 10) {
+		while (option < 1 || option > 11) {
 			System.out.println("Invalid option!");
 			displayingOptions();
 			option = getOption();
 		}
-		if (option == 10) {
+		if (option == 11) {
 			System.out.println("Exiting...");
 			database.saveBank();
 			System.exit(0);
@@ -129,7 +129,7 @@ public class Menu {
 	public void displayingOptions() {
 		List<String> options = Arrays.asList("Choose from the following options: ", "1. Deposit", "2. Withdraw",
 				"3. Transfer", "4. Check Balance", "5. Show Account Information", "6. Switch Account",
-				"7. Create Account", "8. View Assets & Liabilities", "9. Delete Account", "10. Exit");
+				"7. Create Account", "8. View Assets & Liabilities", "9. Delete Account", "10. Talk to a Friend", "11. Exit");
 		for (String option : options) {
 			System.out.println(option);
 		}
