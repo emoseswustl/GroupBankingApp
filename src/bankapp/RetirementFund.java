@@ -14,7 +14,7 @@ public class RetirementFund extends PersonalCapital {
 		this.paidYearly = 0;
 	}
 	
-	public void addYearlyPayment(BankAccount acct, double payment) {
+	public void addYearlyPayment(PersonalCapital acct, double payment) {
 		double total = calculateYearlyPaymentOwed() - this.paidYearly; 
 		acct.withdraw(payment);
 		this.deposit(payment);

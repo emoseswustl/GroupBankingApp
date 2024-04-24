@@ -320,6 +320,20 @@ public class Menu {
 		currentUser.removeAsset(toRemove);
 
 	}
+	
+	public int getValidAccountNumber() {
+		accountIDs.clear();
+		for (PersonalCapital account : currentUser.getBankAccounts()) {
+			System.out.println("Account ID: " + account.getID());
+			accountIDs.add(account.getID());
+		}
+		int switchID = getOption();
+		while (!accountIDs.contains(switchID)) {
+			System.out.println("Invalid account ID!");
+			switchID = getOption();
+		}
+		return switchID;
+	}
 
 	public void assetsAndLiabilities() {
 		boolean validAnswer = false;
@@ -368,17 +382,24 @@ public class Menu {
 				System.out.println("3. Open retirement fund");
 				int opt = caretaker.getInt();
 				if (opt == 1) {
+					if (currentUser.findFund() == null) {
+						System.out.println("You cannot do this action since no fund currently exists.");
+						continue;
+					}
 					System.out.println("How much would you like to deposit?");
 					double deposit = caretaker.getDouble();
 					System.out.println("Which account would you like to pay from? Enter ID number: ");
-					int idnumber = caretaker.getInt();
-					// pseudocode: BankAccount acct = getAccount (idnumber)
-					currentUser.findFund().addYearlyPayment(acct, deposit);
+										int number = getValidAccountNumber();
+					currentUser.findFund().addYearlyPayment(database.getAccount(number), deposit);
 				} else if (opt == 2) {
-					System.out.println("Total value of retirement fund is : " + findFund().getLiquidValue(findFund()));
+					if (currentUser.findFund() == null) {
+						System.out.println("You cannot do this action since no fund currently exists.");
+						continue;
+					}
+					System.out.println("Total value of retirement fund is : " + currentUser.findFund().getLiquidValue());
 				} else if (opt == 3) {
 					System.out.println("Which account would you like to pay from today?");
-					// id needs to be fixed
+					int number = getValidAccountNumber();
 					System.out.println("How much would you like to intialize?");
 					double start = caretaker.getDouble();
 					System.out.println("What is your average annual income?");
@@ -386,6 +407,7 @@ public class Menu {
 					System.out.println("What is the annual rate you would like to contribute?");
 					double rate = caretaker.getDouble();
 					RetirementFund retirementfund = new RetirementFund(rate, income, currentUser, database.createUniqueID());
+					retirementfund.deposit(database.getAccount(number).withdraw(start));
 					currentUser.addAsset(retirementfund);
 				}
 
@@ -509,7 +531,7 @@ public class Menu {
 								}
 							}
 							System.out.println("Enter the account number  that the user is paying with");
-							Integer id = caretaker.getInt();
+							Integer id = this.getValidAccountNumber();
 							PersonalCapital pay = database.getAccount(id);
 							double before = pay.getBalance();
 							paying.payMortgage(money, pay, time, currentUser);
