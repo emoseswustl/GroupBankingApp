@@ -1,10 +1,11 @@
 package bankapp;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Menu {
@@ -29,6 +30,7 @@ public class Menu {
 
 	// not tested
 	public static void main(String[] args) {
+		
 		runMainMenu();
 	}
 
@@ -41,6 +43,9 @@ public class Menu {
 			mainMenu.getExecuteOptions();
 		}
 	}
+
+
+
 
 	private void getExecuteOptions() {
 		displayingOptions();
@@ -357,6 +362,13 @@ public class Menu {
 		}
 	}
 
+
+	
+
+    
+
+   
+
 	public void menuAssets() {
 		System.out.println("You are now viewing assets.");
 		// will fix below line, discussing implementing the lists into bank account
@@ -495,7 +507,7 @@ public class Menu {
 					System.out.println("3. Exit");
 					int select = caretaker.getInt();
 					if (select == 1) {
-						System.out.println("What mortgage would you like to pay? Select number from list abbove");
+						System.out.println("What mortgage would you like to pay? Select number from list above");
 						int wow = caretaker.getInt();
 						Mortgage paying = (Mortgage) currentUser.getLiabilityList().get(wow);
 						double total = paying.getInterestPayment() + paying.getMortgagePayment();
@@ -544,7 +556,7 @@ public class Menu {
 							}
 						}
 					} else if (option == 2) {
-						System.out.println("What mortgage would you like to see? Select number from list abbove");
+						System.out.println("What mortgage would you like to see? Select number from list above");
 						int wow = caretaker.getInt();
 						Mortgage view = (Mortgage) currentUser.getLiabilityList().get(wow);
 						double total = view.getInterestPayment() + view.getMortgagePayment();
@@ -598,8 +610,11 @@ public class Menu {
 
 		// Display the monthly payment to the user
 		System.out.printf("Your monthly loan payment is: $%.2f%n", monthlyPayment);
+		scanner.close();
 
 		return monthlyPayment;
+		
+		
 	}
 
 	public double menuLoans() {
