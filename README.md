@@ -1,6 +1,6 @@
 # Banking System
 
-**Members:** Ethan Moses, Fortuna Kadima, Elise O'Keefe, Klein Morrow
+**Members:** Ethan Moses, Elise O'Keefe, Fortuna Kadima, Klein Morrow
 
 ## Running Bank App:
 
